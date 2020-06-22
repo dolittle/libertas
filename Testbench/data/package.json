@@ -1,0 +1,11 @@
+{
+    "name": "node-red-project",
+    "description": "Testbench for Node-RED Nodes in this repository",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "@dolittle/node-red": "^1.0.0",
+        "@dolittle/node-red-infor-m3": "^1.0.0",
+        "@node-red-contrib-themes/solarized-dark": "^0.1.3"
+    }
+}

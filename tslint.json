@@ -1,0 +1,6 @@
+{
+    "extends": "@dolittle/typescript.build/TSConfig/tslint.json",
+    "rules": {
+        "increment-decrement": false
+    }
+}

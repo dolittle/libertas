@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es2017",
+            "dom"
+        ],
+        "module": "commonjs",
+        "target": "es2015",
+        "esModuleInterop": true,
+        "stripInternal": true,
+        "declaration": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "inlineSources": true,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}
