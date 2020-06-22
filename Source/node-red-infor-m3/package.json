@@ -1,0 +1,59 @@
+{
+    "name": "@dolittle/node-red-infor-m3",
+    "version": "1.0.0",
+    "description": "",
+    "author": "",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dolittle/libertas.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dolittle/home/issues"
+    },
+    "homepage": "https://github.com/dolittle/libertas#readme",
+    "files": [
+        "dist",
+        "package.json",
+        "**/*.ts"
+    ],
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "start": "tsc -w -p ./tsconfig.json & cpx './src/**/*.{html,css,png}' dist --watch --verbose",
+        "tasks": "gulp --tasks --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "clean": "gulp clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "build": "gulp build --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test": "gulp test --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:run": "gulp test-run --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "test:clean": "gulp test-clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "lint-fix": "gulp lint-fix --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
+        "prepublishOnly": "yarn build && yarn test:run && yarn test:clean"
+    },
+    "keywords": [
+        "node-red"
+    ],
+    "node-red": {
+        "nodes": {
+            "change-tracker": "Distribution/nodes/infor-m3.js"
+        }
+    },
+    "devDependencies": {
+        "@types/node-red": "^0.20.1",
+        "cpx": "^1.5.0"
+    },
+    "dependencies": {
+        "@dolittle/node-red": "^1.0.0",
+        "@dolittle/rudiments": "^2.0.18",
+        "@types/node-fetch": "^2.5.7",
+        "@types/xml2js": "^0.4.5",
+        "mongodb": "^3.5.8",
+        "node-fetch": "^2.6.0",
+        "node-red": "^1.0.6",
+        "uuid-mongodb": "^2.3.0",
+        "xml2js": "^0.4.23"
+    }
+}

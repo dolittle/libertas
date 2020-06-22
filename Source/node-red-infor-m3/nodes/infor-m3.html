@@ -1,0 +1,51 @@
+<script type="text/javascript">
+    RED.nodes.registerType('infor-m3', {
+        category: 'function',
+        color: '#FFFFFF',
+        defaults: {
+            url: { value: '', required: true },
+            username: { value: '', required: true },
+            password: { value: '', type: 'password', required: true },
+            datastore: { value: '', type: 'dolittle-datastore-config' },
+            runtime: { value: '', type: 'dolittle-runtime-config' }
+        },
+        inputs: 1,
+        outputs: 2,
+        outputLabels: [
+            'Entity Type',
+            'Entity Instances'
+        ],
+        icon: 'infor.png',
+        label: function () {
+            return 'Infor M3';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="infor-m3">
+    <div class="form-row">
+        <label for="node-input-url"><i class="icon-tag"></i> BaseURL</label>
+        <input type="text" id="node-input-url" placeholder="BaseURL">
+    </div>
+    <div class="form-row">
+        <label for="node-input-username"><i class="icon-tag"></i> Username</label>
+        <input type="text" id="node-input-username" placeholder="Username">
+    </div>
+    <div class="form-row">
+        <label for="node-input-password"><i class="icon-tag"></i> Password</label>
+        <input type="password" id="node-input-password" placeholder="Password">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-runtime"><i class="icon-tag"></i> DataStore</label>
+        <input type="text" id="node-input-datastore" placeholder="DataStore">
+    </div>
+    <div class="form-row">
+        <label for="node-input-runtime"><i class="icon-tag"></i> Runtime</label>
+        <input type="text" id="node-input-runtime" placeholder="Runtime">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="infor-m3">
+    <p></p>
+</script>
