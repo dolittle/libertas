@@ -2,7 +2,7 @@
     "private": true,
     "workspaces": [
         "Source/*",
-        "Testbench/*"
+        "Testbench"
     ],
     "scripts": {
         "tasks": "gulp --tasks --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js",
