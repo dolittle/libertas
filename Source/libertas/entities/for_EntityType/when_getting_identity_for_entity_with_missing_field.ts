@@ -7,7 +7,7 @@ import { EntityType } from '../EntityType';
 import { UnknownPropertyInEntity } from '../UnknownPropertyInEntity';
 
 describe('when getting identity for entity with missing property', () => {
-    const firstProperty = new Property('firstProperty', 'firstProperty', '');
+    const firstProperty = new Property('firstProperty', 'firstProperty', '', true);
     const secondProperty = new Property('secondProperty', 'secondProperty', '');
     const secondPropertyValue = new PropertyValue(secondProperty, 'second');
 

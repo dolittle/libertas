@@ -6,7 +6,7 @@ import { PropertyValue } from '../PropertyValue';
 import { EntityType } from '../EntityType';
 
 describe('when getting identity twice for same entity', () => {
-    const firstProperty = new Property('firstProperty', 'firstProperty', '');
+    const firstProperty = new Property('firstProperty', 'firstProperty', '', true);
     const secondProperty = new Property('secondProperty', 'secondProperty', '');
     const firstPropertyValue = new PropertyValue(firstProperty, 'first');
     const secondPropertyValue = new PropertyValue(secondProperty, 'second');
