@@ -1,0 +1,26 @@
+<script type="text/javascript">
+    RED.nodes.registerType('http-auth-header', {
+        category: 'function',
+        color: '#FF4B00',
+        defaults: {
+            authentication: { value: '', type: 'http-auth-config' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'dolittle.png',
+        label: function () {
+            return 'Http Auth Header';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="http-auth-header">
+    <div class="form-row">
+        <label for="node-input-authentication"><i class="icon-tag"></i> Authentication</label>
+        <input type="text" id="node-input-authentication" placeholder="Authentication">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="http-auth-header">
+    <p></p>
+</script>

@@ -1,0 +1,39 @@
+<script type="text/javascript">
+    RED.nodes.registerType('dolittle-datastore-config', {
+        category: 'config',
+        color: '#FF4B00',
+        icon: 'dolittle.png',
+        defaults: {
+            name: { value: '', required: true },
+            host: { value: "localhost", required: true },
+            port: { value: 27017, required: true, validate: RED.validators.number() },
+            database: { value: 'integration', required: true },
+        },
+        label: function () {
+            return this.host + ':' + this.port + ' (' + this.name + ')';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="dolittle-datastore-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
+        <input type="text" id="node-config-input-host">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-database"><i class="icon-bookmark"></i> Database</label>
+        <input type="text" id="node-config-input-database">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="dolittle-datastore-config">
+    <p></p>
+</script>
