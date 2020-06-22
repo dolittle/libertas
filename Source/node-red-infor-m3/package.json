@@ -16,7 +16,7 @@
     },
     "homepage": "https://github.com/dolittle/libertas#readme",
     "files": [
-        "dist",
+        "Distribution/**/*.*",
         "package.json",
         "**/*.ts"
     ],
