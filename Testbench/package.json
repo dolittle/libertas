@@ -8,7 +8,10 @@
       "start": "nodemon --watch $(pwd)/data --watch $(pwd)/../Source --watch -e js,html,css,json,png --exec 'yarn red'"
     },
     "devDependencies": {
-      "nodemon": "^2.0.4"
+      "nodemon": "^2.0.4",
+      "@dolittle/node-red": "^1.0.0",
+      "@dolittle/node-red-infor-m3": "^1.0.0",
+      "@node-red-contrib-themes/solarized-dark": "^0.1.3"
     },
     "dependencies": {
       "node-red": "^1.0.6"
