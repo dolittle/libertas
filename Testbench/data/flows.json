@@ -28,20 +28,6 @@
         ]
     },
     {
-        "id": "ea70dedd.96ca5",
-        "type": "function",
-        "z": "44b233f4.645aec",
-        "name": "",
-        "func": "\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 170,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "302245d3.be6d2a",
         "type": "inject",
         "z": "44b233f4.645aec",
@@ -53,8 +39,8 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 410,
-        "y": 460,
+        "x": 430,
+        "y": 420,
         "wires": [
             [
                 "d17b95d3.d75368"
