@@ -6,7 +6,7 @@ services:
     volumes:
       - ${PWD}/data:/data
     ports:
-      - 27018:27017
+      - 27017:27017
  
   runtime:
     image: dolittle/runtime:5.0.0-rc.3
@@ -18,7 +18,7 @@ services:
       - ${PWD}/resources.json:/app/.dolittle/resources.json
       - ${PWD}/tenants.json:/app/.dolittle/tenants.json
     ports:
-      - 82:81
-      - 9701:9700
-      - 51052:50052
-      - 51053:50053
+      - 81:81
+      - 9700:9700
+      - 50052:50052
+      - 50053:50053
