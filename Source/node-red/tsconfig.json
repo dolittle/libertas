@@ -2,6 +2,7 @@
     "extends": "../../tsconfig.settings.json",
     "compilerOptions": {
         "rootDir": ".",
-        "baseUrl": "./"
+        "baseUrl": "./",
+        "outDir": "./Distribution"
     }
 }

@@ -4,5 +4,6 @@
         "rootDir": "nodes",
         "baseUrl": "./",
         "sourceRoot": "./nodes",
+        "outDir": "./Distribution"
     }
 }
