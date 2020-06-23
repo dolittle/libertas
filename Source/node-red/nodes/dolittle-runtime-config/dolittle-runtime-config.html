@@ -1,9 +1,13 @@
+<!-- Copyright (c) Dolittle.  All Rights Reserved.  Licensed under the MIT License. See LICENSE file in the project root for full license information. -->
+
 <script type="text/javascript">
     RED.nodes.registerType('dolittle-runtime-config', {
         category: 'config',
         color: '#FF4B00',
         icon: 'dolittle.png',
         defaults: {
+            tenant: { value: '', required: true },
+            microservice: { value: '', required: true },
             name: { value: '', required: true },
             host: { value: "localhost", required: true },
             port: { value: 50053, required: true, validate: RED.validators.number() }
@@ -15,6 +19,14 @@
 </script>
 
 <script type="text/html" data-template-name="dolittle-runtime-config">
+    <div class="form-row">
+        <label for="node-config-input-tenant"><i class="icon-bookmark"></i> Tenant</label>
+        <input type="text" id="node-config-input-tenant">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-microservice"><i class="icon-bookmark"></i> Microservice</label>
+        <input type="text" id="node-config-input-microservice">
+    </div>
     <div class="form-row">
         <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">
