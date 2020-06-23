@@ -33,10 +33,6 @@ module.exports = function (RED: Red) {
             this.port = c.port;
 
             this.createNode(config);
-
-            this.on('input', (msg) => {
-                this.send(msg);
-            });
         }
     }
 
