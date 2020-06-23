@@ -53,6 +53,7 @@
     },
     "dependencies": {
         "@dolittle/libertas": "^1.0.0",
+        "@dolittle/sdk": "^1.2.0",
         "@types/mongodb": "^3.5.20",
         "node-red": "^1.0.6"
     }
