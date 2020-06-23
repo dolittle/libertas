@@ -24,5 +24,28 @@
 </script>
 
 <script type="text/html" data-help-name="event-store">
-    <p></p>
+    <p>Enables committing private and public events to the Dolittle Event Store API</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">JSON</span>
+    </dl>
+
+    <h3>Details</h3>
+    <p>
+        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
+        in the form of a well defined JSON structure.
+        <br>
+        <code>
+            {<br>
+            &nbsp;"artifact": "(GUID representing the artifact)",<br>
+            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
+            &nbsp;"public": true | false,<br>
+            &nbsp;"content": {<br>
+            &nbsp;&nbsp;"key": "value"<br>
+            &nbsp;}<br>
+            }<br>    
+        </code>
+    </p>
+
 </script>
