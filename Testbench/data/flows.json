@@ -1,0 +1,64 @@
+[
+    {
+        "id": "44b233f4.645aec",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "da6bfe2a.82fcd",
+        "type": "dolittle-runtime-config",
+        "z": "",
+        "tenant": "c59abefd-f72a-4684-ad7f-dfdd2c466fec",
+        "microservice": "385b8c13-cb2a-409f-87b8-df348cbc4822",
+        "name": "local",
+        "host": "localhost",
+        "port": "50053"
+    },
+    {
+        "id": "d17b95d3.d75368",
+        "type": "event-store",
+        "z": "44b233f4.645aec",
+        "server": "da6bfe2a.82fcd",
+        "x": 690,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ea70dedd.96ca5",
+        "type": "function",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 170,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "302245d3.be6d2a",
+        "type": "inject",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "topic": "",
+        "payload": "{\"artifact\":\"81274cea-8350-4819-ba71-1369d2ddc1ea\",\"eventSourceId\":\"d87cf960-ff0b-4938-9da6-049ee6aaa438\",\"public\":true,\"content\":{\"hello\":\"world2\"}}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 410,
+        "y": 460,
+        "wires": [
+            [
+                "d17b95d3.d75368"
+            ]
+        ]
+    }
+]
