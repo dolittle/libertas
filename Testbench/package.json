@@ -5,7 +5,7 @@
     "scripts": {
       "red": "env NODE_TLS_REJECT_UNAUTHORIZED=0 node --inspect=0.0.0.0:9229 node_modules/node-red/red.js --userDir $(pwd)/data",
       "debug_brk": "env NODE_TLS_REJECT_UNAUTHORIZED=0 node --inspect=0.0.0.0:9229 --inspect-brk node_modules/node-red/red.js --userDir $(pwd)/data",
-      "start": "nodemon --watch $(pwd)/data --watch $(pwd)/../Source --watch -e js,html,css,json,png --exec 'yarn red'"
+      "start": "nodemon --exec 'yarn red'"
     },
     "devDependencies": {
       "nodemon": "^2.0.4",
