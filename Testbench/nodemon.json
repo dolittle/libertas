@@ -5,5 +5,9 @@
         "data",
         "../Source"
     ],
+    "ignore": [
+        "../Source/node-red/ui/**/*",
+        "../Source/node-red/Distribution/wwwroot"
+    ],
     "ext": "js html css json png"
 }

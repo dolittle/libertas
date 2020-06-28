@@ -1,0 +1,15 @@
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+@import '../theme.scss';
+
+.content {
+    padding-left: 2rem;
+}
+
+.section {
+    @extend .ms-depth-8;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background-color: $ms-color-white
+}
