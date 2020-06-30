@@ -1,6 +1,6 @@
 {
     "name": "@dolittle/node-red",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "",
     "author": "",
     "license": "MIT",
@@ -54,24 +54,24 @@
     },
     "devDependencies": {
         "@dolittle/typescript.webpack.aurelia": "^1.2.3",
-        "office-ui-fabric-core": "^11.0.0",
-        "dotenv": "^6.1.0",
-        "@types/node-red": "^0.20.1",
-        "@types/mongodb": "^3.5.20",
         "@types/express": "^4.17.6",
-        "cpx": "^1.5.0"
+        "@types/mongodb": "^3.5.20",
+        "@types/node-red": "^0.20.1",
+        "cpx": "^1.5.0",
+        "dotenv": "^6.1.0",
+        "office-ui-fabric-core": "^11.0.0"
     },
     "dependencies": {
+        "@dolittle/fluentui.aurelia": "^2.0.0",
         "@dolittle/libertas": "^1.0.0",
         "@dolittle/sdk": "^1.2.0",
-        "@dolittle/fluentui.aurelia": "^2.0.0",
         "@uifabric/icons": "^7.3.37",
-        "express": "^4.17.1",
         "aurelia-animator-css": "^1.0.4",
         "aurelia-bootstrapper": "^2.3.3",
         "aurelia-fetch-client": "^1.8.2",
         "aurelia-framework": "^1.3.1",
         "aurelia-pal": "^1.8.2",
+        "express": "^4.17.1",
         "node-red": "^1.0.6"
     }
 }
