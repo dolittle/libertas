@@ -39,6 +39,7 @@
     ],
     "node-red": {
         "nodes": {
+            "infor-m3": "Distribution/nodes/infor-m3.js",
             "infor-m3-config": "Distribution/nodes/infor-m3-config/infor-m3-config.js",
             "infor-m3-bulk": "Distribution/nodes/infor-m3-bulk/infor-m3-bulk.js"
         }
