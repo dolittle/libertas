@@ -5,10 +5,3 @@ export { Node } from './Node';
 
 export { DolittleRuntimeConfig } from './nodes/dolittle-runtime-config/dolittle-runtime-config';
 export { HttpAuthConfig } from './nodes/http-auth-config/http-auth-config';
-
-import { Red } from 'node-red';
-
-module.exports = function (RED: Red) {
-    console.log('Good day...');
-
-};
