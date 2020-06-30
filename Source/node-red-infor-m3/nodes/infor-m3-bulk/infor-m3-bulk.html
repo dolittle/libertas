@@ -1,0 +1,74 @@
+<!-- Copyright (c) Dolittle.  All Rights Reserved.  Licensed under the MIT License. See LICENSE file in the project root for full license information. -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('infor-m3-bulk', {
+        category: 'infor',
+        color: '#FFFFFF',
+        icon: 'infor.png',
+        defaults: {
+            name: { value: '' },
+            server: { value: '', type: 'infor-m3-config', required: true },
+            program: { value: '', required: true },
+            transaction: { value: '' },
+            maxrecords: { value: 0 },
+            columns: { value: [] }
+        },
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || 'M3 Bulk Request';
+        },
+        oneditprepare: function() {
+            const columnsListContainer = $("#node-input-columns-container");
+            columnsListContainer.editableList({
+                addItem: function(container, i, opt) {
+                    const input = $('<input/>', {type: 'text'}).appendTo(container);
+                    input.val(opt.name || '');
+                },
+                sortable: false,
+                removable: true
+            });
+
+            for (const column of this.columns) {
+                columnsListContainer.editableList('addItem', {name: column});
+            }
+        },
+        oneditsave: function() {
+            const node = this;
+            node.columns = [];
+            $("#node-input-columns-container").editableList('items').each(function(i) {
+                const input = $(this).find('input');
+                node.columns.push(input.val());
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="infor-m3-bulk">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> M3 config</label>
+        <input type="text" id="node-input-server" placeholder="M3 config">
+    </div>
+    <div class="form-row">
+        <label for="node-input-program"><i class="icon-bookmark"></i> Program</label>
+        <input type="text" id="node-input-program">
+    </div>
+    <div class="form-row">
+        <label for="node-input-transaction"><i class="icon-bookmark"></i> Transaction</label>
+        <input type="text" id="node-input-transaction">
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxrecords"><i class="icon-bookmark"></i> Max # records</label>
+        <input type="number" id="node-input-maxrecords" placeholder="0">
+    </div>
+    <div class="form-row node-input-columns-container-row">
+        <p>Columns to return</p>
+        <ol id="node-input-columns-container"></ol>
+    </div>
+    <script type="text/html" data-help-name="infor-m3-bulk">
+    <p></p>
+</script>
