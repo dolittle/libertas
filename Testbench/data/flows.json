@@ -7,157 +7,64 @@
         "info": ""
     },
     {
-        "id": "da6bfe2a.82fcd",
-        "type": "dolittle-runtime-config",
+        "id": "a95c4150.55031",
+        "type": "infor-m3-config",
         "z": "",
-        "tenant": "c59abefd-f72a-4684-ad7f-dfdd2c466fec",
-        "microservice": "385b8c13-cb2a-409f-87b8-df348cbc4822",
-        "name": "local",
-        "host": "localhost",
-        "port": "50053"
+        "name": "M3 Test Instance"
     },
     {
-        "id": "b53e6473.d9c458",
-        "type": "ui_base",
-        "theme": {
-            "name": "theme-light",
-            "lightTheme": {
-                "default": "#0094CE",
-                "baseColor": "#0094CE",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": true,
-                "reset": false
-            },
-            "darkTheme": {
-                "default": "#097479",
-                "baseColor": "#097479",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": false
-            },
-            "customTheme": {
-                "name": "Untitled Theme 1",
-                "default": "#4B7930",
-                "baseColor": "#4B7930",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-            },
-            "themeState": {
-                "base-color": {
-                    "default": "#0094CE",
-                    "value": "#0094CE",
-                    "edited": false
-                },
-                "page-titlebar-backgroundColor": {
-                    "value": "#0094CE",
-                    "edited": false
-                },
-                "page-backgroundColor": {
-                    "value": "#fafafa",
-                    "edited": false
-                },
-                "page-sidebar-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-textColor": {
-                    "value": "#1bbfff",
-                    "edited": false
-                },
-                "group-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "widget-textColor": {
-                    "value": "#111111",
-                    "edited": false
-                },
-                "widget-backgroundColor": {
-                    "value": "#0094ce",
-                    "edited": false
-                },
-                "widget-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "base-font": {
-                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-                }
-            },
-            "angularTheme": {
-                "primary": "indigo",
-                "accents": "blue",
-                "warn": "red",
-                "background": "grey"
-            }
-        },
-        "site": {
-            "name": "Node-RED Dashboard",
-            "hideToolbar": "false",
-            "allowSwipe": "false",
-            "lockMenu": "false",
-            "allowTempTheme": "true",
-            "dateFormat": "DD/MM/YYYY",
-            "sizes": {
-                "sx": 48,
-                "sy": 48,
-                "gx": 6,
-                "gy": 6,
-                "cx": 6,
-                "cy": 6,
-                "px": 0,
-                "py": 0
-            }
-        }
-    },
-    {
-        "id": "61453540.c8f8cc",
-        "type": "ui_group",
-        "z": "",
-        "name": "Default",
-        "tab": "5e639b5d.2bd084",
-        "order": 1,
-        "disp": true,
-        "width": "12",
-        "collapse": false
-    },
-    {
-        "id": "5e639b5d.2bd084",
-        "type": "ui_tab",
-        "z": "",
-        "name": "List",
-        "icon": "dashboard"
-    },
-    {
-        "id": "d17b95d3.d75368",
-        "type": "event-store",
+        "id": "fccc879f.327af8",
+        "type": "infor-m3-bulk",
         "z": "44b233f4.645aec",
-        "server": "da6bfe2a.82fcd",
-        "x": 690,
-        "y": 420,
+        "name": "Get Initial product",
+        "server": "a95c4150.55031",
+        "program": "PDS002MI",
+        "transaction": "LstComponent",
+        "maxrecords": "",
+        "columns": [
+            "MTPL",
+            "ITNO"
+        ],
+        "x": 490,
+        "y": 180,
         "wires": [
-            []
+            [
+                "d6af56ba.b00d18"
+            ]
         ]
     },
     {
-        "id": "302245d3.be6d2a",
+        "id": "d6af56ba.b00d18",
+        "type": "debug",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 760,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "e899f620.0d60a8",
         "type": "inject",
         "z": "44b233f4.645aec",
         "name": "",
         "topic": "",
-        "payload": "{\"artifact\":\"81274cea-8350-4819-ba71-1369d2ddc1ea\",\"eventSourceId\":\"d87cf960-ff0b-4938-9da6-049ee6aaa438\",\"public\":true,\"content\":{\"hello\":\"world2\"}}",
+        "payload": "[{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}}]",
         "payloadType": "json",
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 430,
-        "y": 420,
+        "x": 170,
+        "y": 180,
         "wires": [
             [
-                "d17b95d3.d75368"
+                "fccc879f.327af8"
             ]
         ]
     }

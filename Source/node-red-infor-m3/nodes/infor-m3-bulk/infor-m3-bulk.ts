@@ -3,7 +3,7 @@
 
 import { NodeProperties, Red } from 'node-red';
 import { Node } from '@dolittle/node-red';
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 import { InforM3Config } from 'nodes/infor-m3-config/infor-m3-config';
 
 export interface InforM3Bulk {
@@ -22,7 +22,7 @@ export class BulkRequestTransaction {
     constructor(transaction: string, record: any, columns?: string[]) {
         this._transaction = transaction;
         this._record = record,
-        this._selectedColumns = columns;
+            this._selectedColumns = columns;
     }
 
     serialize(): any {
@@ -57,20 +57,20 @@ export class BulkRequest {
     }
 
     addTransaction(record: any, transaction?: string, columns?: string[]) {
-        const actualTransaction = transaction || this._defaultTransaction;
+        const actualTransaction = transaction || this._defaultTransaction;
         if (!actualTransaction) {
-            throw 'Transaction must be defined on BulkRequest or per Transaction';
+            throw new Error('Transaction must be defined on BulkRequest or per Transaction');
         }
         if (!record) {
-            throw 'Record must be defined per Transaction';
+            throw new Error('Record must be defined per Transaction');
         }
-        this._transactions.push(new BulkRequestTransaction(actualTransaction!, record, columns || this._defaultColumns));
+        this._transactions.push(new BulkRequestTransaction(actualTransaction!, record, columns || this._defaultColumns));
     }
 
     serialize(): any {
         return {
             program: this._program,
-            maxReturnedRecords: this._maxReturnedRecords || 0,
+            maxReturnedRecords: this._maxReturnedRecords || 0,
             transactions: this._transactions.map(transaction => transaction.serialize()),
         };
     }
@@ -89,9 +89,9 @@ module.exports = function (RED: Red) {
         constructor(config: NodeProperties) {
             super(RED);
             this.createNode(config);
-            
+
             this.name = config.name;
-            
+
             const c = config as any;
             this._server = RED.nodes.getNode(c.server) as any as InforM3Config;
             this.program = c.program;
@@ -116,7 +116,7 @@ module.exports = function (RED: Red) {
                         },
                         body: JSON.stringify(bulkRequest.serialize()),
                     }).then(result => {
-                        if (result.status == 200 || result.status == 400) {
+                        if (result.status === 200 || result.status === 400) {
                             return result.json().then(data => {
                                 if (data.wasTerminated) {
                                     this.error(`${data.terminationErrorType}: ${data.terminationReason}`);
@@ -140,7 +140,7 @@ module.exports = function (RED: Red) {
                     }).catch(error => {
                         this.error(error, msg);
                     });
-                } catch(error) {
+                } catch (error) {
                     this.error(error, msg);
                 }
             });
