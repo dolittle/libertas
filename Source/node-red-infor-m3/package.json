@@ -23,7 +23,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "start": "tsc -w -p ./tsconfig.json & cpx './src/**/*.{html,css,png}' dist --watch --verbose",
+        "start": "tsc -w -p ./tsconfig.json & cpx './nodes/**/*.{html,css,png}' Distribution/nodes --watch --verbose",
         "files": "cpx './nodes/**/*.{html,css,png}' Distribution/nodes",
         "tasks": "gulp --tasks --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
         "clean": "gulp clean --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js",
@@ -39,7 +39,8 @@
     ],
     "node-red": {
         "nodes": {
-            "change-tracker": "Distribution/nodes/infor-m3.js"
+            "infor-m3-config": "Distribution/nodes/infor-m3-config/infor-m3-config.js",
+            "infor-m3-bulk": "Distribution/nodes/infor-m3-bulk/infor-m3-bulk.js"
         }
     },
     "devDependencies": {
