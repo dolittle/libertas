@@ -106,8 +106,6 @@ module.exports = function (RED: Red) {
                         bulkRequest.addTransaction(request.record, request.transaction, request.columns);
                     }
 
-                    console.log(JSON.stringify(bulkRequest.serialize()));
-
                     fetch(`${this._server?.endpoint}/execute`, {
                         method: 'POST',
                         headers: {
