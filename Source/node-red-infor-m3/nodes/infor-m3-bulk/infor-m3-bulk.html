@@ -10,14 +10,18 @@
             server: { value: '', type: 'infor-m3-config', required: true },
             program: { value: '', required: true },
             transaction: { value: '' },
-            maxrecords: { value: 0 },
+            maxrecords: { value: 0, validate:RED.validators.number() },
+            maxbulk: { value: 0, validate:RED.validators.number() },
+            maxparallel: { value: 1, validate:RED.validators.number() },
             columns: { value: [] }
         },
         inputs: 1,
-        outputs: 1,
+        outputs: 2,
         label: function () {
             return this.name || 'M3 Bulk Request';
         },
+        inputLabels: 'Transactions',
+        outputLabels: ['Progress', 'Result'],
         oneditprepare: function() {
             const columnsListContainer = $("#node-input-columns-container");
             columnsListContainer.editableList({
@@ -63,7 +67,15 @@
     </div>
     <div class="form-row">
         <label for="node-input-maxrecords"><i class="icon-bookmark"></i> Max # records</label>
-        <input type="number" id="node-input-maxrecords" placeholder="0">
+        <input type="number" id="node-input-maxrecords">
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxbulk"><i class="icon-bookmark"></i> Max # bulk</label>
+        <input type="number" id="node-input-maxbulk">
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxparallel"><i class="icon-bookmark"></i> Max # parallel</label>
+        <input type="number" id="node-input-maxparallel">
     </div>
     <div class="form-row node-input-columns-container-row">
         <p>Columns to return</p>

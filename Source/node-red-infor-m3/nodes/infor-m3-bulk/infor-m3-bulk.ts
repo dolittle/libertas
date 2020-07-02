@@ -11,6 +11,8 @@ export interface InforM3Bulk {
     program: string;
     transaction: string;
     maxRecords: number;
+    maxBulk: number;
+    maxParallel: number;
     columns: string[];
 }
 
@@ -84,6 +86,8 @@ module.exports = function (RED: Red) {
         program: string = '';
         transaction: string = '';
         maxRecords: number = 0;
+        maxBulk: number = 0;
+        maxParallel: number = 1;
         columns: string[] = [];
 
         constructor(config: NodeProperties) {
@@ -96,52 +100,84 @@ module.exports = function (RED: Red) {
             this._server = RED.nodes.getNode(c.server) as any as InforM3Config;
             this.program = c.program;
             this.transaction = c.transaction;
-            this.maxRecords = c.maxrecords;
+            this.maxRecords = parseInt(c.maxrecords) || 0;
+            this.maxBulk = parseInt(c.maxbulk) || 0;
+            this.maxParallel = parseInt(c.maxparallel) || 1;
             this.columns = c.columns;
 
-            this.on('input', (msg) => {
+            this.on('input', async (msg: any, send: (msgs: any[]) => void, done: (err?: any) => void) => {
+                // Pre-1.0 polyfills
+                send = send || ((msgs: any[]) => this.send(msgs));
+                done = done || ((err?: any) => { if (err) this.error(err, msg); });
+
                 try {
-                    const bulkRequest = new BulkRequest(this.program, this.maxRecords, this.transaction, this.columns);
-                    for (const request of msg.payload) {
-                        bulkRequest.addTransaction(request.record, request.transaction, request.columns);
+                    const transactions = (Array.isArray(msg.payload) ? msg.payload : [msg.payload]) as any[];
+
+                    let bulkCount = transactions.length / this.maxBulk;
+                    if (Math.floor(bulkCount) !== bulkCount) bulkCount = Math.ceil(bulkCount);
+
+                    const bulks: any[][] = [];
+                    let position = 0;
+                    for (let n = 0; n < bulkCount; n++) {
+                        bulks.push(transactions.slice(position, position+this.maxBulk));
                     }
 
-                    fetch(`${this._server?.endpoint}/execute`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Basic ${Buffer.from(`${this._server?.username}:${this._server?.password}`).toString('base64')}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(bulkRequest.serialize()),
-                    }).then(result => {
-                        if (result.status === 200 || result.status === 400) {
-                            return result.json().then(data => {
-                                if (data.wasTerminated) {
-                                    this.error(`${data.terminationErrorType}: ${data.terminationReason}`);
-                                } else {
-                                    for (let n = 0; n < data.results.length; n++) {
-                                        const element = data.results[n];
-                                        const result = msg.payload[n].result = {
-                                            records: element.records,
-                                        } as any;
-                                        if (element.errorMessage) {
-                                            result.error = element.errorMessage;
-                                        }
-                                    }
-                                    this.send(msg);
-                                }
-                            });
-                        }
-                        return result.text().then(text => {
-                            this.error(`${result.status}: ${result.statusText}`, msg);
-                        });
-                    }).catch(error => {
-                        this.error(error, msg);
-                    });
+                    for (let n = 0; n < bulks.length; n++) {
+                        const bulk = bulks[n];
+                        await this.processBulk(bulk);
+                        send([{ payload: {
+                            index: n,
+                            count: bulks.length,
+                        }}, null]);
+                    }
+
+                    send([null, msg]);
+                    done();
                 } catch (error) {
-                    this.error(error, msg);
+                    done(error);
                 }
             });
+        }
+
+        async processBulk(bulk: any[]) {
+            const bulkRequest = new BulkRequest(this.program, this.maxRecords, this.transaction, this.columns);
+            for (const request of bulk) {
+                bulkRequest.addTransaction(request.record, request.transaction, request.columns);
+            }
+
+            const response = await fetch(`${this._server?.endpoint}/execute`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Basic ${Buffer.from(`${this._server?.username}:${this._server?.password}`).toString('base64')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bulkRequest.serialize()),
+            });
+
+            if (response.status === 200 || response.status === 400) {
+                const data = await response.json();
+                if (data.wasTerminated) {
+                    throw new Error(`${data.terminationErrorType}: ${data.terminationReason}`);
+                } else {
+                    for (let n = 0; n < bulk.length; n++) {
+                        const transaction = bulk[n];
+                        const result = data.results[n];
+                        if (result) {
+                            bulk[n].result = {
+                                records: result.records,
+                                error: result.errorMessage
+                            };
+                        } else {
+                            bulk[n].result = {
+                                records: [],
+                                error: 'No result returned',
+                            };
+                        }
+                    }
+                }
+            } else {
+                throw new Error(`${response.status}: ${response.statusText}`);
+            }
         }
     }
 
