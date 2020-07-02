@@ -100,9 +100,9 @@ module.exports = function (RED: Red) {
             this._server = RED.nodes.getNode(c.server) as any as InforM3Config;
             this.program = c.program;
             this.transaction = c.transaction;
-            this.maxRecords = parseInt(c.maxrecords) || 0;
-            this.maxBulk = parseInt(c.maxbulk) || 0;
-            this.maxParallel = parseInt(c.maxparallel) || 1;
+            this.maxRecords = parseInt(c.maxrecords, 10) || 0;
+            this.maxBulk = parseInt(c.maxbulk, 10) || 0;
+            this.maxParallel = parseInt(c.maxparallel, 10) || 1;
             this.columns = c.columns;
 
             this.on('input', async (msg: any, send: (msgs: any[]) => void, done: (err?: any) => void) => {
@@ -119,7 +119,8 @@ module.exports = function (RED: Red) {
                     const bulks: any[][] = [];
                     let position = 0;
                     for (let n = 0; n < bulkCount; n++) {
-                        bulks.push(transactions.slice(position, position+this.maxBulk));
+                        bulks.push(transactions.slice(position, position + this.maxBulk));
+                        position += this.maxBulk;
                     }
 
                     for (let n = 0; n < bulks.length; n++) {
