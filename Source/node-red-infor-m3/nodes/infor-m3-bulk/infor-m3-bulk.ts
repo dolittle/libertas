@@ -113,14 +113,19 @@ module.exports = function (RED: Red) {
                 try {
                     const transactions = (Array.isArray(msg.payload) ? msg.payload : [msg.payload]) as any[];
 
-                    let bulkCount = transactions.length / this.maxBulk;
-                    if (Math.floor(bulkCount) !== bulkCount) bulkCount = Math.ceil(bulkCount);
-
                     const bulks: any[][] = [];
-                    let position = 0;
-                    for (let n = 0; n < bulkCount; n++) {
-                        bulks.push(transactions.slice(position, position + this.maxBulk));
-                        position += this.maxBulk;
+
+                    if (this.maxBulk > 0) {
+                        let bulkCount = transactions.length / this.maxBulk;
+                        if (Math.floor(bulkCount) !== bulkCount) bulkCount = Math.ceil(bulkCount);
+
+                        let position = 0;
+                        for (let n = 0; n < bulkCount; n++) {
+                            bulks.push(transactions.slice(position, position + this.maxBulk));
+                            position += this.maxBulk;
+                        }
+                    } else {
+                        bulks.push(transactions);
                     }
 
                     for (let n = 0; n < bulks.length; n++) {
