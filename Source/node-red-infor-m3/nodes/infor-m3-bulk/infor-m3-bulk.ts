@@ -128,21 +128,15 @@ module.exports = function (RED: Red) {
                         bulks.push(transactions);
                     }
 
-                    for (let n = 0; n < bulks.length; n++) {
-                        const bulk = bulks[n];
-                        await this.processBulk(bulk);
-                        
-                        const statusMessage = { payload: {
-                            index: n,
-                            count: bulks.length,
-                        }} as any;
-                        for (const key in msg) {
-                            if (key != '_msgid' && key != 'payload') {
-                                statusMessage[key] = msg[key];
-                            }
-                        }
-                        send([statusMessage, null]);
+                    const progress = {
+                        completed: 0,
+                        total: bulks.length,
+                    };
+                    const processors: Promise<void>[] = [];
+                    for (let n = 0; n < this.maxParallel; n++) {
+                        processors.push(this.startProcessing(msg, bulks, progress, send));
                     }
+                    await Promise.all(processors);
 
                     send([null, msg]);
                     done();
@@ -150,6 +144,30 @@ module.exports = function (RED: Red) {
                     done(error);
                 }
             });
+        }
+
+        async startProcessing(msg: any, bulks: any[][], progress: any, send: (msgs: any[]) => void) {
+            while (true) {
+                const bulk = bulks.pop();
+                if (!bulk) return;
+
+                await this.processBulk(bulk);
+                progress.completed += 1;
+                this.sendStatusMessage(msg, progress, send);
+            }
+        }
+
+        sendStatusMessage(msg: any, progress: any, send: (msgs: any[]) => void) {
+            const statusMessage = { payload: {
+                completed: progress.completed,
+                total: progress.total,
+            }} as any;
+            for (const key in msg) {
+                if (key != '_msgid' && key != 'payload') {
+                    statusMessage[key] = msg[key];
+                }
+            }
+            send([statusMessage, null]);
         }
 
         async processBulk(bulk: any[]) {
