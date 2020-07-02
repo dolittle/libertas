@@ -21,8 +21,8 @@
         "program": "PDS002MI",
         "transaction": "LstComponent",
         "maxrecords": "0",
-        "maxbulk": "100",
-        "maxparallel": "1",
+        "maxbulk": "1",
+        "maxparallel": "10",
         "columns": [
             "MTPL",
             "ITNO"
@@ -49,7 +49,7 @@
         "tostatus": false,
         "complete": "payload",
         "targetType": "msg",
-        "x": 750,
+        "x": 960,
         "y": 180,
         "wires": []
     },
@@ -59,7 +59,7 @@
         "z": "44b233f4.645aec",
         "name": "",
         "topic": "",
-        "payload": "[{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}}]",
+        "payload": "[{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"6004\",\"FACI\":\"100\",\"STRT\":\"STD\"}},{\"record\":{\"PRNO\":\"9510\",\"FACI\":\"100\",\"STRT\":\"STD\"}}]",
         "payloadType": "json",
         "repeat": "",
         "crontab": "",
@@ -84,7 +84,7 @@
         "tostatus": false,
         "complete": "payload",
         "targetType": "msg",
-        "x": 760,
+        "x": 950,
         "y": 80,
         "wires": []
     }
