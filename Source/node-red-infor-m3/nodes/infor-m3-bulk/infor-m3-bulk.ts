@@ -163,7 +163,7 @@ module.exports = function (RED: Red) {
                 total: progress.total,
             }} as any;
             for (const key in msg) {
-                if (key != '_msgid' && key != 'payload') {
+                if (key !== '_msgid' && key !== 'payload') {
                     statusMessage[key] = msg[key];
                 }
             }
