@@ -131,10 +131,17 @@ module.exports = function (RED: Red) {
                     for (let n = 0; n < bulks.length; n++) {
                         const bulk = bulks[n];
                         await this.processBulk(bulk);
-                        send([{ payload: {
+                        
+                        const statusMessage = { payload: {
                             index: n,
                             count: bulks.length,
-                        }}, null]);
+                        }} as any;
+                        for (const key in msg) {
+                            if (key != '_msgid' && key != 'payload') {
+                                statusMessage[key] = msg[key];
+                            }
+                        }
+                        send([statusMessage, null]);
                     }
 
                     send([null, msg]);
