@@ -20,7 +20,9 @@
         "server": "a95c4150.55031",
         "program": "PDS002MI",
         "transaction": "LstComponent",
-        "maxrecords": "",
+        "maxrecords": "0",
+        "maxbulk": "100",
+        "maxparallel": "1",
         "columns": [
             "MTPL",
             "ITNO"
@@ -28,6 +30,9 @@
         "x": 490,
         "y": 180,
         "wires": [
+            [
+                "5fdf1785.03b688"
+            ],
             [
                 "d6af56ba.b00d18"
             ]
@@ -37,14 +42,14 @@
         "id": "d6af56ba.b00d18",
         "type": "debug",
         "z": "44b233f4.645aec",
-        "name": "",
+        "name": "RESULT",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
         "complete": "payload",
         "targetType": "msg",
-        "x": 760,
+        "x": 750,
         "y": 180,
         "wires": []
     },
@@ -67,5 +72,20 @@
                 "fccc879f.327af8"
             ]
         ]
+    },
+    {
+        "id": "5fdf1785.03b688",
+        "type": "debug",
+        "z": "44b233f4.645aec",
+        "name": "PROGRESS",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 760,
+        "y": 80,
+        "wires": []
     }
 ]
