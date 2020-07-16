@@ -6,30 +6,25 @@
         color: '#FF4B00',
         icon: 'dolittle.png',
         defaults: {
-            tenant: { value: '', required: true },
-            microservice: { value: '', required: true },
-            name: { value: '', required: true },
+            name: { value: '', required: false },
+            microservice: { value: '', required: true, validate: RED.validators.regex(/[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}/) },
             host: { value: "localhost", required: true },
             port: { value: 50053, required: true, validate: RED.validators.number() }
         },
         label: function () {
-            return this.host + ':' + this.port + ' (' + this.name + ')';
+            return this.host + ':' + this.port + (this.name ? (' (' + this.name + ')') : '');
         }
     });
 </script>
 
 <script type="text/html" data-template-name="dolittle-runtime-config">
     <div class="form-row">
-        <label for="node-config-input-tenant"><i class="icon-bookmark"></i> Tenant</label>
-        <input type="text" id="node-config-input-tenant">
+        <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
     </div>
     <div class="form-row">
         <label for="node-config-input-microservice"><i class="icon-bookmark"></i> Microservice</label>
         <input type="text" id="node-config-input-microservice">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
-        <input type="text" id="node-config-input-name">
     </div>
     <div class="form-row">
         <label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
@@ -42,5 +37,20 @@
 </script>
 
 <script type="text/html" data-help-name="dolittle-runtime-config">
-    <p></p>
+    <p>Configures the connection to a Dolittle Runtime.</p>
+
+    <h3>Properties</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>An optional name used to identify this configuration.</dd>
+
+        <dt>Microservice</dt>
+        <dd>The UUID that uniquely identifies this microservice in the Dolittle Platform, e.g. <code>6ba7b810-9dad-11d1-80b4-00c04fd430c8</code>.</dd>
+
+        <dt>Host</dt>
+        <dd>The host where the Runtime is running.</dd>
+
+        <dt>Port</dt>
+        <dd>The port where the Runtime is exposing its private port.</dd>
+    </dl>
 </script>

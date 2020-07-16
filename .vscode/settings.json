@@ -1,6 +1,6 @@
 {
     "files.exclude": {
-        
+        "**/node_modules": true,
         "**/jspm_packages": true,
         "**/.git": true,
         "**/.svn": true,

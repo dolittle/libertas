@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 import { NodeProperties, Red } from 'node-red';
-import { Node } from '@dolittle/node-red';
+import { Node, registerNodeType } from '@dolittle/node-red';
 import fetch from 'node-fetch';
 import { InforM3Config } from '../infor-m3-config/infor-m3-config';
 
@@ -80,6 +80,7 @@ export class BulkRequest {
 
 module.exports = function (RED: Red) {
 
+    @registerNodeType(RED, 'infor-m3-bulk')
     class InforM3Bulk extends Node implements InforM3Bulk {
         private _server?: InforM3Config;
         name: string = '';
@@ -91,8 +92,7 @@ module.exports = function (RED: Red) {
         columns: string[] = [];
 
         constructor(config: NodeProperties) {
-            super(RED);
-            this.createNode(config);
+            super(config);
 
             this.name = config.name;
 
@@ -211,6 +211,4 @@ module.exports = function (RED: Red) {
             }
         }
     }
-
-    InforM3Bulk.registerType(RED, 'infor-m3-bulk');
 };

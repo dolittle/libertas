@@ -1,27 +1,41 @@
 // Copyright (c) Dolittle. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-import { Node as NRNode, NodeProperties, Red } from 'node-red';
+import { Node as NRNode, NodeProperties, Red, NodeId } from 'node-red';
 
 export abstract class Node {
-    red: Red;
+    private _red: Red;
+    private _config: NodeProperties;
 
-    protected constructor(RED: Red) {
-        this.red = RED;
+    protected constructor(config: NodeProperties) {
+        this._red = Object.getPrototypeOf(this).RED;
+        this._config = config;
+
+        this.name = config.name;
+
+        this.createNode();
     }
 
-    public createNode(config: NodeProperties): void {
-        this.red.nodes.createNode(this, config);
+    public getConfigurationFromNode<T>(id: NodeId): T | undefined {
+        const node = this._red.nodes.getNode(id);
+        if (!!node) {
+            return node as unknown as T;
+        } else {
+            return undefined;
+        }
     }
 
-    static registerType(RED: Red, type: string, opts?: any) {
-        RED.nodes.registerType(
-            type,
-            (this as any).prototype.constructor as any,
-            opts
-        );
+    private createNode(): void {
+        this._red.nodes.createNode(this, this._config);
     }
 }
 
 export interface Node extends NRNode {
+}
+
+export function registerNodeType(RED: Red, type: string, options?: any) {
+    return function (target: any) {
+        target.prototype.RED = RED;
+        RED.nodes.registerType(type, target.prototype.constructor, options);
+    };
 }

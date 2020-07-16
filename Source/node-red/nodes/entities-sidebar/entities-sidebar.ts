@@ -3,20 +3,17 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Node, registerNodeType } from '../../Node';
 
 module.exports = function (RED: Red) {
     RED.httpAdmin.get('/entities', (req: any, res: any) => {
         res.send('Hello world');
     });
 
+    @registerNodeType(RED, 'entities-sidebar')
     class EntitiesSidebar extends Node {
         constructor(config: NodeProperties) {
-            super(RED);
-
-            this.createNode(config);
+            super(config);
         }
     }
-
-    EntitiesSidebar.registerType(RED, 'entities-sidebar');
 };

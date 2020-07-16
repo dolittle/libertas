@@ -9,7 +9,7 @@ services:
       - 27017:27017
  
   runtime:
-    image: dolittle/runtime:5.0.0-rc.3
+    image: dolittle/runtime:5.0.0-rc.5
     depends_on: 
       - mongo
     links:

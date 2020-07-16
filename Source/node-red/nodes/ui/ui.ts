@@ -5,7 +5,7 @@ import * as path from 'path';
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Node, registerNodeType } from '../../Node';
 
 import * as express from 'express';
 
@@ -15,13 +15,10 @@ module.exports = function (RED: Red) {
     const staticBaseDir = path.resolve(uiDir, '../../wwwroot');
     RED.httpAdmin.use('/dolittle', express.static(staticBaseDir));
 
+    @registerNodeType(RED, 'UI')
     class UI extends Node {
         constructor(config: NodeProperties) {
-            super(RED);
-
-            this.createNode(config);
+            super(config);
         }
     }
-
-    UI.registerType(RED, 'UI');
 };

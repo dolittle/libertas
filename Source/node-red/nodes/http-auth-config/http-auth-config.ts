@@ -3,7 +3,7 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Node, registerNodeType } from '../../Node';
 
 export interface HttpAuthConfig {
     name: string;
@@ -13,14 +13,19 @@ export interface HttpAuthConfig {
 
 module.exports = function (RED: Red) {
 
+    @registerNodeType(RED, 'http-auth-config', {
+        credentials: {
+            username: { type: 'text' },
+            password: { type: 'password' }
+        }
+    })
     class HttpAuthConfig extends Node implements HttpAuthConfig {
         name: string = '';
         username: string = '';
         password: string = '';
 
         constructor(config: NodeProperties) {
-            super(RED);
-            this.createNode(config);
+            super(config);
 
             const c = config as any;
             this.name = c.name;
@@ -33,11 +38,4 @@ module.exports = function (RED: Red) {
             });
         }
     }
-
-    HttpAuthConfig.registerType(RED, 'http-auth-config', {
-        credentials: {
-            username: { type: 'text' },
-            password: { type: 'password' }
-        }
-    });
 };

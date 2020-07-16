@@ -3,15 +3,14 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Node, registerNodeType } from '../../Node';
 
 module.exports = function (RED: Red) {
 
+    @registerNodeType(RED, 'change-tracker')
     class ChangeTracker extends Node {
         constructor(config: NodeProperties) {
-            super(RED);
-
-            this.createNode(config);
+            super(config);
 
             this.context().test = 'Forty two';
 
@@ -25,6 +24,4 @@ module.exports = function (RED: Red) {
             });
         }
     }
-
-    ChangeTracker.registerType(RED, 'change-tracker');
 };

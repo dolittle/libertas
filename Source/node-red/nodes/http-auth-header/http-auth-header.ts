@@ -3,18 +3,17 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Node, registerNodeType } from '../../Node';
 import { HttpAuthConfig } from '../http-auth-config/http-auth-config';
 
 module.exports = function (RED: Red) {
 
+    @registerNodeType(RED, 'http-auth-header')
     class HttpAuthHeader extends Node {
         private _authentication?: HttpAuthConfig;
 
         constructor(config: NodeProperties) {
-            super(RED);
-
-            this.createNode(config);
+            super(config);
 
             const c = config as any;
             this._authentication = RED.nodes.getNode(c.authentication) as any as HttpAuthConfig;
@@ -29,6 +28,4 @@ module.exports = function (RED: Red) {
             });
         }
     }
-
-    HttpAuthHeader.registerType(RED, 'http-auth-header');
 };

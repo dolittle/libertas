@@ -3,38 +3,49 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '../../Node';
+import { Guid } from '@dolittle/rudiments';
+import { MicroserviceId } from '@dolittle/sdk.execution';
+
+import { registerNodeType } from '../../Node';
+import { ConfigurationNode } from '../../ConfigurationNode';
+import { ClientBuilder, Client } from '@dolittle/sdk';
 
 export interface DolittleRuntimeConfig {
-    tenant: string;
-    microservice: string;
-    name: string;
-    host: string;
-    port: number;
+    readonly microservice: MicroserviceId;
+    readonly host: string;
+    readonly port: number;
+
+    readonly clientBuilder: ClientBuilder;
+}
+
+interface DolittleRuntimeProperties extends NodeProperties {
+    readonly microservice: string;
+    readonly host: string;
+    readonly port: number;
 }
 
 module.exports = function (RED: Red) {
+    @registerNodeType(RED, 'dolittle-runtime-config')
+    class DolittleRuntimeConfig extends ConfigurationNode<DolittleRuntimeProperties> implements DolittleRuntimeConfig {
+        readonly microservice: MicroserviceId = Guid.empty;
+        readonly host: string = '';
+        readonly port: number = 0;
 
-    class DolittleRuntimeConfig extends Node implements DolittleRuntimeConfig {
-        tenant: string = '';
-        microservice: string = '';
-        name: string = '';
-        host: string = '';
-        port: number = 0;
+        constructor(config: DolittleRuntimeProperties) {
+            super(config);
 
-        constructor(config: NodeProperties) {
-            super(RED);
+            this.microservice = Guid.parse(config.microservice);
+            this.host = config.host;
+            this.port = config.port;
+        }
 
-            const c = config as any;
-            this.tenant = c.tenant;
-            this.microservice = c.microservice;
-            this.name = c.name;
-            this.host = c.host;
-            this.port = c.port;
+        validate(config: DolittleRuntimeProperties): boolean {
+            // TODO: Should validate GUID here
+            return config.port > 1000;
+        }
 
-            this.createNode(config);
+        get clientBuilder(): ClientBuilder {
+            return Client.for(this.microservice).connectTo(this.host, this.port);
         }
     }
-
-    DolittleRuntimeConfig.registerType(RED, 'dolittle-runtime-config');
 };

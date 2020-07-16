@@ -3,19 +3,17 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Node } from '@dolittle/node-red';
+import { Node, registerNodeType } from '@dolittle/node-red';
 import { ClientAPI } from './ClientAPI';
-
 
 module.exports = function (RED: Red) {
 
+    @registerNodeType(RED, 'infor-m3')
     class InforM3 extends Node {
         private _clientAPI: ClientAPI;
 
         constructor(config: NodeProperties) {
-            super(RED);
-
-            this.createNode(config);
+            super(config);
 
             this._clientAPI = new ClientAPI(RED, config);
 
@@ -27,6 +25,4 @@ module.exports = function (RED: Red) {
             });
         }
     }
-
-    InforM3.registerType(RED, 'infor-m3');
 };

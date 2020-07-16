@@ -5,6 +5,7 @@
         "target": "ES2015",
         "downlevelIteration": true,
         "inlineSourceMap": true,
-        "sourceMap": false
+        "sourceMap": false,
+        "experimentalDecorators": true
     }
 }

@@ -13,6 +13,15 @@
         "name": "M3 Test Instance"
     },
     {
+        "id": "c844cd09.f0dc5",
+        "type": "dolittle-runtime-config",
+        "z": "",
+        "name": "",
+        "microservice": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        "host": "localhost",
+        "port": "50053"
+    },
+    {
         "id": "fccc879f.327af8",
         "type": "infor-m3-bulk",
         "z": "44b233f4.645aec",
@@ -86,6 +95,80 @@
         "targetType": "msg",
         "x": 950,
         "y": 80,
+        "wires": []
+    },
+    {
+        "id": "87482a25.a1fa98",
+        "type": "event-store",
+        "z": "44b233f4.645aec",
+        "server": "c844cd09.f0dc5",
+        "x": 570,
+        "y": 300,
+        "wires": [
+            [
+                "9d0fc9c7.a27238"
+            ]
+        ]
+    },
+    {
+        "id": "813e9642.294128",
+        "type": "inject",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "topic": "",
+        "payload": "{\"artifact\":\"7a6155dd-9109-4488-8f6f-c57fe4b65bfb\",\"eventSourceId\":\"7a6155dd-9109-4488-8f6f-c57fe4b65bfb\",\"content\":{\"anInt\":42,\"aString\":\"hello world\"}}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "3abb1b27.1f4ed4"
+            ]
+        ]
+    },
+    {
+        "id": "3abb1b27.1f4ed4",
+        "type": "change",
+        "z": "44b233f4.645aec",
+        "name": "Set ExecutionContext",
+        "rules": [
+            {
+                "t": "set",
+                "p": "executionContext.tenantId",
+                "pt": "msg",
+                "to": "c59abefd-f72a-4684-ad7f-dfdd2c466fec",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 300,
+        "wires": [
+            [
+                "87482a25.a1fa98"
+            ]
+        ]
+    },
+    {
+        "id": "9d0fc9c7.a27238",
+        "type": "debug",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 790,
+        "y": 300,
         "wires": []
     }
 ]
