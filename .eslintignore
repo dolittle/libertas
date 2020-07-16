@@ -1,8 +1,0 @@
-*.d.ts
-node_modules
-dist
-out
-Distribution
-wallaby.conf.js
-coverage
-.eslintrc.js

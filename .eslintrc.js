@@ -9,6 +9,16 @@ module.exports = {
         sourceType: 'module',
         tsconfigRootDir: __dirname,
     },
+    ignorePatterns: [
+        '**/*.d.ts',
+        '**/node_modules',
+        '**/dist',
+        '**/out',
+        '**/Distribution',
+        '**/wallaby.conf.js',
+        '**/coverage',
+        '**/.eslintrc.js',
+    ],
     rules: {
         '@typescript-eslint/naming-convention': [
             'error',
