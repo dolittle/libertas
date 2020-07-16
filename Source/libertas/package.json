@@ -33,7 +33,7 @@
         "lint:fix": "gulp lint-fix --gulpfile ../../node_modules/@dolittle/typescript.build/Gulpfile.js"
     },
     "dependencies": {
-        "@dolittle/rudiments": "2.0.18",
+        "@dolittle/rudiments": "3.0.0",
         "luxon": "1.24.1",
         "mongodb": "3.5.8",
         "object-hash": "2.0.3",
