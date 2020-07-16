@@ -1,0 +1,101 @@
+<!-- Copyright (c) Dolittle.  All Rights Reserved.  Licensed under the MIT License. See LICENSE file in the project root for full license information. -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('event-filter', {
+        category: 'Dolittle',
+        color: '#FF4B00',
+        defaults: {
+            name: { value: '' },
+            filterId: { value: '', required: true, validate: RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/) },
+            filterType: { value: 'unpartitioned', required: true, validate: RED.validators.regex(/^(unpartitioned|partitioned|public)$/) },
+            scopeId: { value: '', validate: RED.validators.regex(/^$(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: 'dolittle.png',
+        label: function () {
+            return 'Event Filter';
+        },
+        oneditprepare: function() {
+            $('#event-filter-properties-generate-guid').click(() => {
+                const id = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                                .flatMap(n => [n >> 4, n & 0xF])
+                                .map((n, i) => i == 12 ? 4 : i == 16 ? (8 + (n & 0x3)) : n)
+                                .reduce((s, n, i) => s + ((i > 7 && i%4 == 0 && i < 24) ? '-' : '') + n.toString(16), '');
+                $('#node-input-filterId').val(id).change();
+            });
+            $('#node-input-filterId').change(() => {
+                $('#event-filter-properties-generate-guid').prop('disabled', !!$('#node-input-filterId').val());
+            });
+            $('#node-input-filterType').change(() => {
+                $('#node-row-scopeId').css('display', $('#node-input-filterType').val() == 'public' ? 'none' : '');
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="event-filter">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filterId"><i class="icon-tag"></i> Filter Id</label>
+        <input type="text" id="node-input-filterId">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filterType"><i class="icon-bookmark"></i> Filter Type</label>
+        <select id="node-input-filterType">
+            <option value="unpartitioned">Unpartitioned</option>
+            <option value="partitioned">Partitioned</option>
+            <option value="public">Public</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-row-scopeId">
+        <label for="node-input-scopeId"><i class="icon-bookmark"></i> Scope Id</label>
+        <input type="text" id="node-input-scopeId" placeholder="00000000-0000-0000-0000-000000000000">
+    </div>
+    <button class="red-ui-button" id="event-filter-properties-generate-guid">Generate new Id</button>
+</script>
+
+<script type="text/html" data-help-name="event-filter">
+    <p>Registers an event filter with the Dolittle Runtime. A filter defines a stream in the Event Store by deciding which events should be part of the stream.</p>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">JSON</span>
+    </dl>
+
+    <h3>Details</h3>
+    <p>
+        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
+        in the form of a well defined JSON structure.
+        <br>
+        <code>
+            {<br>
+            &nbsp;"artifact": "(GUID representing the artifact)",<br>
+            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
+            &nbsp;"public": true | false,<br>
+            &nbsp;"content": {<br>
+            &nbsp;&nbsp;"key": "value"<br>
+            &nbsp;}<br>
+            }<br>    
+        </code>
+    </p>
+
+    <h3>Properties</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>An optional name used to identify this filter.</dd>
+
+        <dt>Filter Id</dt>
+        <dd>The UUID that uniquely identifies this filter, e.g. <code>6ba7b810-9dad-11d1-80b4-00c04fd430c8</code>. Note - changing this field will create a new stream without deleting the old one.</dd>
+
+        <dt>Filter Type</dt>
+        <dd>Either <em>Unpartitioned</em>, <em>Partitioned</em> or <em>Public</em>, defines the kind of stream to create.</dd>
+
+        <dt>Scope Id</dt>
+        <dd>Selects the scope of the Event Store to filter events from. Not applicable for <em>Public</em> filters.</dd>
+    </dl>
+
+</script>

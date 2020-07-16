@@ -7,7 +7,7 @@
         icon: 'dolittle.png',
         defaults: {
             name: { value: '', required: false },
-            microservice: { value: '', required: true, validate: RED.validators.regex(/[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}/) },
+            microservice: { value: '', required: true, validate: RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/) },
             host: { value: "localhost", required: true },
             port: { value: 50053, required: true, validate: RED.validators.number() }
         },

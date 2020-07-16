@@ -47,6 +47,7 @@
             "dolittle-runtime-config": "Distribution/nodes/dolittle-runtime-config/dolittle-runtime-config.js",
             "dolittle-datastore-config": "Distribution/nodes/dolittle-datastore-config/dolittle-datastore-config.js",
             "event-store": "Distribution/nodes/event-store/event-store.js",
+            "event-filter": "Distribution/nodes/event-filter/event-filter.js",
             "entities-sidebar": "Distribution/nodes/entities-sidebar/entities-sidebar.js",
             "http-auth-config": "Distribution/nodes/http-auth-config/http-auth-config.js",
             "http-auth-header": "Distribution/nodes/http-auth-header/http-auth-header.js"
