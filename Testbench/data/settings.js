@@ -1,18 +1,5 @@
-/**
- * Copyright JS Foundation and other contributors, http://js.foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- **/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // The `https` setting requires the `fs` module. Uncomment the following
 // to make it available:
@@ -79,7 +66,7 @@ module.exports = {
     // Note: once you set this property, do not change it - doing so will prevent
     // node-red from being able to decrypt your existing credentials and they will be
     // lost.
-    credentialSecret: "0577d43e-b913-4d6f-b364-c4fbabdd5f06",
+    credentialSecret: '0577d43e-b913-4d6f-b364-c4fbabdd5f06',
 
     // By default, all user data is stored in a directory called `.node-red` under
     // the user's home directory. To use a different location, the following
@@ -259,7 +246,7 @@ module.exports = {
             // debug - record information which is more verbose than info + info + warn + error + fatal errors
             // trace - record very detailed logging + debug + info + warn + error + fatal errors
             // off - turn off all logging (doesn't affect metrics or audit)
-            level: "debug",
+            level: 'debug',
             // Whether or not to include metric events in the log output
             metrics: false,
             // Whether or not to include audit events in the log output
@@ -278,4 +265,4 @@ module.exports = {
             enabled: false
         }
     }
-}
+};
