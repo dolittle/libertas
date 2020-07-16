@@ -56,7 +56,6 @@
         "mongodb": "3.5.8",
         "node-fetch": "2.6.0",
         "node-red": "1.0.6",
-        "uuid-mongodb": "2.3.0",
         "xml2js": "0.4.23"
     }
 }
