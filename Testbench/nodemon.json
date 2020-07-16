@@ -2,12 +2,12 @@
     "restartable": "rs",
     "verbose": false,
     "watch": [
-        "data",
         "../Source"
     ],
     "ignore": [
         "../Source/node-red/ui/**/*",
         "../Source/node-red/Distribution/wwwroot"
     ],
+    "delay": "5000",
     "ext": "js html css json png"
 }
