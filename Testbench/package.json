@@ -1,16 +1,18 @@
 {
-  "name": "node-red",
+  "private": true,
+  "name": "testbench",
   "version": "1.0.0",
   "description": "",
   "scripts": {
     "red": "env NODE_TLS_REJECT_UNAUTHORIZED=0 node --inspect=0.0.0.0:9229 node_modules/node-red/red.js --userDir $(pwd)/data",
     "debug_brk": "env NODE_TLS_REJECT_UNAUTHORIZED=0 node --inspect=0.0.0.0:9229 --inspect-brk node_modules/node-red/red.js --userDir $(pwd)/data",
-    "start": "nodemon --exec 'yarn red'"
+    "start": "nodemon --exec 'yarn red'",
+    "build": "echo 'Nothing to build here :)'"
   },
   "devDependencies": {
     "nodemon": "2.0.4",
-    "@dolittle/node-red": "1.0.0",
-    "@dolittle/node-red-infor-m3": "1.0.0",
+    "@dolittle/node-red": "1.1.7",
+    "@dolittle/node-red-infor-m3": "1.1.7",
     "@node-red-contrib-themes/solarized-dark": "0.1.3"
   },
   "dependencies": {

@@ -1,12 +1,13 @@
 {
     "private": true,
     "workspaces": [
-        "Source/*"
+        "Source/*",
+        "Testbench"
     ],
     "scripts": {
         "prebuild": "yarn clean",
         "postbuild": "yarn lint",
-        "build": "tsc -b Source/tsconfig.json",
+        "build": "yarn workspaces run build",
         "clean": "gulp clean --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js",
         "test:run": "gulp test-run --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js",
         "test:clean": "gulp test-clean --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js",
