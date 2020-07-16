@@ -35,7 +35,7 @@ export class EntityHashes implements IEntityHashes {
     /** @inheritdoc */
     async initialize(): Promise<void> {
         const all = await this.collection().find().toArray() as Document[];
-        for (const document of all ) {
+        for (const document of all) {
 
             this._map.set((MUUIDToGuid(document.id)).toString(), document.hash);
         }
@@ -59,7 +59,7 @@ export class EntityHashes implements IEntityHashes {
 
         const document = {
             id: MUUID.from(entity.id.toString()),
-            hash: hash
+            hash
         } as Document;
 
         await this.collection().updateOne({ id: document.id}, { $set: document }, { upsert: true });

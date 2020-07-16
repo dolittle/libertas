@@ -4,7 +4,7 @@
 import { NodeProperties, Red } from 'node-red';
 import { Node } from '@dolittle/node-red';
 import fetch from 'node-fetch';
-import { InforM3Config } from 'nodes/infor-m3-config/infor-m3-config';
+import { InforM3Config } from '../infor-m3-config/infor-m3-config';
 
 export interface InforM3Bulk {
     name: string;
@@ -23,8 +23,8 @@ export class BulkRequestTransaction {
 
     constructor(transaction: string, record: any, columns?: string[]) {
         this._transaction = transaction;
-        this._record = record,
-            this._selectedColumns = columns;
+        this._record = record;
+        this._selectedColumns = columns;
     }
 
     serialize(): any {

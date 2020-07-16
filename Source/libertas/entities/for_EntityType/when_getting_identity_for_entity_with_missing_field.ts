@@ -13,7 +13,7 @@ describe('when getting identity for entity with missing property', () => {
 
     const entityType = new EntityType('', '', firstProperty, secondProperty);
 
-    let result: any = undefined;
+    let result: any;
 
     try {
         entityType.getSourceIdFrom(secondPropertyValue);

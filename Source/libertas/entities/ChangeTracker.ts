@@ -32,16 +32,16 @@ export class ChangeTracker implements IChangeTracker {
         this.modified = this._entities.pipe(
             filter(_ => _.exists),
             filter(_ => _hashes.hasChanged(_.entity)),
-            flatMap(async (_) => await this.createChangeSetFrom(_.entity)),
+            flatMap(async (_) => this.createChangeSetFrom(_.entity)),
             filter(_ => _.hasChanges));
 
-        this.added.subscribe(async _ => await _hashes.update(_));
+        this.added.subscribe(async _ => _hashes.update(_));
         this.modified.subscribe(_ => _hashes.update(_.entity));
     }
 
     feed(...entities: Entity[]): void {
         for (const entity of entities) {
-            this._entities.next({ entity: entity, exists: this._hashes.exists(entity) });
+            this._entities.next({ entity, exists: this._hashes.exists(entity) });
         }
     }
 

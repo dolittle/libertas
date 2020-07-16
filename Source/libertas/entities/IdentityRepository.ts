@@ -64,7 +64,7 @@ export class IdentityRepository implements IIdentityRepository {
 
     private async insertMapEntry(sourceId: SourceId, id: Guid) {
         const mapEntry = {
-            sourceId: sourceId,
+            sourceId,
             id: MUUID.from(id.toString())
         } as Document;
 

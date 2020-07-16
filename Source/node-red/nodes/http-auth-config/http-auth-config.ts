@@ -5,11 +5,6 @@ import { NodeProperties, Red } from 'node-red';
 
 import { Node } from '../../Node';
 
-class credentials {
-    username: string = '';
-    password: string = '';
-}
-
 export interface HttpAuthConfig {
     name: string;
     username: string;
