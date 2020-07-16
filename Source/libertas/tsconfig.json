@@ -2,8 +2,11 @@
     "extends": "../../tsconfig.settings.json",
     "compilerOptions": {
         "rootDir": ".",
-        "baseUrl": "./",
-        "sourceRoot": "./",
-        "outDir": "./out"
-    }
+        "sourceRoot": "../",
+        "outDir": "Distribution"
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "Distribution"],
+    "references": [
+    ]
 }

@@ -11,20 +11,8 @@
         "test:run": "gulp test-run --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js",
         "test:clean": "gulp test-clean --gulpfile node_modules/@dolittle/typescript.build/Gulpfile.js"
     },
-    "dependencies": {
-        "reflect-metadata": "^0.1.13"
-    },
     "devDependencies": {
-        "@dolittle/typescript.build": "^5.3.6",
-        "eslint": "^6.6.0",
-        "eslint-config-prettier": "^6.6.0",
-        "eslint-plugin-prettier": "^3.1.1",
-        "fs-extra": "^9.0.0",
-        "glob": "^7.1.6",
-        "prettier": "^2.0.5",
-        "typescript": "^3.4.3",
-        "webpack": "^4.42.0",
-        "webpack-cli": "^3.3.11"
+        "@dolittle/typescript.build": "rc"
     },
     "license": "MIT"
 }

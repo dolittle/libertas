@@ -2,8 +2,12 @@
     "extends": "../../tsconfig.settings.json",
     "compilerOptions": {
         "rootDir": ".",
-        "baseUrl": "./",
-        "sourceRoot": "./",
-        "outDir": "./Distribution"
-    }
+        "sourceRoot": "../",
+        "outDir": "Distribution"
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "Distribution"],
+    "references": [
+        { "path": "../libertas" }
+    ]
 }

@@ -1,22 +1,10 @@
 {
+    "extends": "@dolittle/typescript.config",
     "compilerOptions": {
-        "lib": [
-            "es2017",
-            "dom"
-        ],
-        "module": "commonjs",
-        "target": "es2015",
-        "esModuleInterop": true,
-        "stripInternal": true,
-        "declaration": true,
-        "strict": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "inlineSources": true,
+        "module": "CommonJS",
+        "target": "ES2015",
         "downlevelIteration": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "inlineSourceMap": true,
+        "sourceMap": false
     }
 }
