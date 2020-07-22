@@ -11,7 +11,8 @@ import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
 import { EventSourceId } from '@dolittle/sdk.events';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
-import { MessageNode, SendCallback, MessageWithExecutionContext } from '../../MessageNode';
+import { MessageWithExecutionContext } from '../../Message';
+import { messageHandlerNode, SendCallback } from '../../MessageHandlerNode';
 
 interface EventStoreProperties extends NodeProperties {
     server: NodeId;
@@ -21,22 +22,19 @@ interface UncommittedEvent {
     eventSourceId: EventSourceId,
     artifact: ArtifactId,
     content: any
-}
-
-interface CommitEventsRequest extends UncommittedEvent {
     public?: boolean;
-    events?: UncommittedEvent[];
 }
 
 class CommitEventsResponse {
 }
 
-type Request = MessageWithExecutionContext<CommitEventsRequest>;
+type Request = MessageWithExecutionContext<UncommittedEvent | UncommittedEvent[]>;
 type Response = MessageWithExecutionContext<CommitEventsResponse>;
 
 module.exports = function (RED: Red) {
     @registerNodeType(RED, 'event-store')
-    class EventStore extends MessageNode<Request, Response> {
+    @messageHandlerNode
+    class EventStore extends Node {
         private _client?: Client;
         private _server?: DolittleRuntimeConfig;
 
@@ -45,9 +43,11 @@ module.exports = function (RED: Red) {
 
             this._server = this.getConfigurationFromNode(config.server);
             this._client = this._server?.clientBuilder.build();
+
+            // TODO: Setup on close to handle stopping graciouslly
         }
 
-        async handle(message: Request, send: SendCallback<Response>): Promise<void> {
+        async handle(message: Request, send: SendCallback): Promise<void> {
             if (!this._client) {
                 throw new Error('No client configured');
             }
@@ -57,16 +57,11 @@ module.exports = function (RED: Red) {
             if (!message.payload) {
                 throw new Error('No payload');
             }
-            const events = message.payload.events || [message.payload];
 
-            // TODO: Commit more than one event
+            const events = Array.isArray(message.payload) ? message.payload : [message.payload];
+
             this._client.executionContextManager.currentFor(message.executionContext.tenantId);
-            const event = events[0];
-            if (message.payload?.public) {
-                await this._client.eventStore.commitPublic(event.content, event.eventSourceId, event.artifact);
-            } else {
-                await this._client.eventStore.commit(event.content, event.eventSourceId, event.artifact);
-            }
+            await this._client.eventStore.commit(events);
 
             console.log('Inserted events');
 
