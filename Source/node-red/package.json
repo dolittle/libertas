@@ -49,6 +49,7 @@
             "event-store": "Distribution/nodes/event-store/event-store.js",
             "event-filter": "Distribution/nodes/event-filter/event-filter.js",
             "event-filter-response": "Distribution/nodes/event-filter-response/event-filter-response.js",
+            "event-handler": "Distribution/nodes/event-handler/event-handler.js",
             "entities-sidebar": "Distribution/nodes/entities-sidebar/entities-sidebar.js",
             "http-auth-config": "Distribution/nodes/http-auth-config/http-auth-config.js",
             "http-auth-header": "Distribution/nodes/http-auth-header/http-auth-header.js"

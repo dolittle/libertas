@@ -9,7 +9,7 @@
             server: { value: '', type: 'dolittle-runtime-config' },
             filterId: { value: '', required: true, validate: RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/) },
             filterType: { value: 'unpartitioned', required: true, validate: RED.validators.regex(/^(unpartitioned|partitioned|public)$/) },
-            scopeId: { value: '', validate: RED.validators.regex(/^$(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
+            scopeId: { value: '', validate: RED.validators.regex(/^(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
         },
         inputs: 0,
         outputs: 1,

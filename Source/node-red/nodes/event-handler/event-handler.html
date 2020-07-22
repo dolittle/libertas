@@ -1,0 +1,167 @@
+<!-- Copyright (c) Dolittle.  All Rights Reserved.  Licensed under the MIT License. See LICENSE file in the project root for full license information. -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('event-handler', {
+        category: 'Dolittle',
+        color: '#FF4B00',
+        defaults: {
+            name: { value: '' },
+            server: { value: '', type: 'dolittle-runtime-config' },
+            eventHandlerId: { value: '', required: true, validate: RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/) },
+            partitioned: { value: true, required: true },
+            scopeId: { value: '', validate: RED.validators.regex(/^(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
+            artifacts: { value: [], validate: function(artifacts) {
+                if (!artifacts) {
+                    return true;
+                }
+                const seenArtifacts = [];
+                for (const artifact of artifacts) {
+                    if (!RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/)(artifact)) {
+                        return false;
+                    }
+                    if (seenArtifacts.includes(artifact)) {
+                        return false;
+                    }
+                    seenArtifacts.push(artifact);
+                }
+                return true;
+            }},
+            outputs: { value: 0 }
+        },
+        inputs: 0,
+        outputs: 0,
+        outputLabels: function(n) {
+            return 'Event: '+this.artifacts[n];
+        },
+        icon: 'dolittle.png',
+        label: function () {
+            return 'Event Handler';
+        },
+        oneditprepare: function() {
+            $('#event-handler-properties-generate-guid').click(() => {
+                const id = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                                .flatMap(n => [n >> 4, n & 0xF])
+                                .map((n, i) => i == 12 ? 4 : i == 16 ? (8 + (n & 0x3)) : n)
+                                .reduce((s, n, i) => s + ((i > 7 && i%4 == 0 && i < 24) ? '-' : '') + n.toString(16), '');
+                $('#node-input-eventHandlerId').val(id).change();
+            });
+            $('#node-input-eventHandlerId').change(() => {
+                $('#event-handler-properties-generate-guid').prop('disabled', !!$('#node-input-eventHandlerId').val());
+            });
+
+            const artifactValidator = RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/);
+            $("#node-input-artifacts-container").editableList({
+                addItem: function(container, i, opt) {
+                    const input = $('<input/>', {type: 'text'}).appendTo(container);
+                    input.css('width', '100%');
+                    input.val(opt.artifact || '');
+                    input.change(() => {
+                        const seenArtifacts = [];
+                        $("#node-input-artifacts-container").editableList('items').each(function(i) {
+                            const input = $(this).find('input');
+                            const artifact = input.val();
+                            if (!artifactValidator(artifact)) {
+                                input.addClass('input-error');
+                                return;
+                            }
+                            if (seenArtifacts.includes(artifact)) {
+                                input.addClass('input-error');
+                                return;
+                            }
+                            input.removeClass('input-error');
+                            seenArtifacts.push(artifact);
+                        });
+                    });
+                    input.change();
+                },
+                sortable: true,
+                removable: true
+            });
+            if (this.artifacts) for (const artifact of this.artifacts) {
+                $("#node-input-artifacts-container").editableList('addItem', {artifact: artifact});
+            }
+        },
+        oneditsave: function() {
+            const node = this;
+            node.artifacts = [];
+            $("#node-input-artifacts-container").editableList('items').each(function(i) {
+                const input = $(this).find('input');
+                node.artifacts.push(input.val());
+            });
+            node.outputs = node.artifacts.length;
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="event-handler">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-eventHandlerId"><i class="icon-tag"></i> Handler Id</label>
+        <input type="text" id="node-input-eventHandlerId">
+    </div>
+    <div class="form-row">
+        <label for="node-input-partitioned"><i class="icon-tag"></i> Partitioned</label>
+        <input type="checkbox" id="node-input-partitioned">
+    </div>
+    <div class="form-row" id="node-row-scopeId">
+        <label for="node-input-scopeId"><i class="icon-bookmark"></i> Scope Id</label>
+        <input type="text" id="node-input-scopeId" placeholder="00000000-0000-0000-0000-000000000000">
+    </div>
+    <div class="form-row node-input-artifacts-container-row">
+        <p>Events to handle:</p>
+        <ol id="node-input-artifacts-container"></ol>
+    </div>
+    <button class="red-ui-button" id="event-handler-properties-generate-guid">Generate new Id</button>
+</script>
+
+<script type="text/html" data-help-name="event-handler">
+    <p>Registers an event filter with the Dolittle Runtime. A filter defines a stream in the Event Store by deciding which events should be part of the stream.</p>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">JSON</span>
+    </dl>
+
+    <h3>Details</h3>
+    <p>
+        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
+        in the form of a well defined JSON structure.
+        <br>
+        <code>
+            {<br>
+            &nbsp;"artifact": "(GUID representing the artifact)",<br>
+            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
+            &nbsp;"public": true | false,<br>
+            &nbsp;"content": {<br>
+            &nbsp;&nbsp;"key": "value"<br>
+            &nbsp;}<br>
+            }<br>
+        </code>
+    </p>
+
+    <h3>Properties</h3>
+    <dl>
+        <dt>Name</dt>
+        <dd>An optional name used to identify this filter.</dd>
+
+        <dt>Server</dt>
+        <dd>The Dolittle Runtime configuration to use.</dd>
+
+        <dt>Filter Id</dt>
+        <dd>The UUID that uniquely identifies this filter, e.g. <code>6ba7b810-9dad-11d1-80b4-00c04fd430c8</code>. Note - changing this field will create a new stream without deleting the old one.</dd>
+
+        <dt>Filter Type</dt>
+        <dd>Either <em>Unpartitioned</em>, <em>Partitioned</em> or <em>Public</em>, defines the kind of stream to create.</dd>
+
+        <dt>Scope Id</dt>
+        <dd>Selects the scope of the Event Store to filter events from. Not applicable for <em>Public</em> filters.</dd>
+    </dl>
+
+</script>
