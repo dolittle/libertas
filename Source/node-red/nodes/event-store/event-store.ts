@@ -42,7 +42,7 @@ module.exports = function (RED: Red) {
             super(config);
 
             this._server = this.getConfigurationFromNode(config.server);
-            this._client = this._server?.clientBuilder.build();
+            this._client = this._server?.clientBuilder.configureLogging(_ => _.transports = this._loggerTransport).build();
 
             // TODO: Setup on close to handle stopping graciouslly
         }

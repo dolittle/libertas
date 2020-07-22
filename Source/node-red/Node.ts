@@ -2,14 +2,26 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 import { Node as NRNode, NodeProperties, Red, NodeId } from 'node-red';
+import { Logger, createLogger } from 'winston';
+import Transport from 'winston-transport';
+
+import { NodeLogTransport } from './NodeLogTransport';
 
 export abstract class Node {
-    private _red: Red;
-    private _config: NodeProperties;
+    private readonly _red: Red;
+    private readonly _config: NodeProperties;
+
+    protected readonly _loggerTransport: Transport;
+    protected readonly _logger: Logger;
 
     protected constructor(config: NodeProperties) {
         this._red = Object.getPrototypeOf(this).RED;
         this._config = config;
+
+        this._loggerTransport = new NodeLogTransport(this);
+        this._logger = createLogger({
+            transports: this._loggerTransport,
+        });
 
         this.name = config.name;
 

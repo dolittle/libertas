@@ -67,6 +67,7 @@ module.exports = function (RED: Red) {
             this._client = this._server?.clientBuilder
                 .configureLogging(_ => {
                     _.level = 'debug';
+                    _.transports = this._loggerTransport;
                 })
                 .withFilters(_ => {
                 _.for(this._filterId, __ => {
