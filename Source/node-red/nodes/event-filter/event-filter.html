@@ -6,6 +6,7 @@
         color: '#FF4B00',
         defaults: {
             name: { value: '' },
+            server: { value: '', type: 'dolittle-runtime-config' },
             filterId: { value: '', required: true, validate: RED.validators.regex(/^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$/) },
             filterType: { value: 'unpartitioned', required: true, validate: RED.validators.regex(/^(unpartitioned|partitioned|public)$/) },
             scopeId: { value: '', validate: RED.validators.regex(/^$(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
@@ -38,6 +39,10 @@
     <div class="form-row">
         <label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
         <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
     </div>
     <div class="form-row">
         <label for="node-input-filterId"><i class="icon-tag"></i> Filter Id</label>
@@ -79,7 +84,7 @@
             &nbsp;"content": {<br>
             &nbsp;&nbsp;"key": "value"<br>
             &nbsp;}<br>
-            }<br>    
+            }<br>
         </code>
     </p>
 
@@ -87,6 +92,9 @@
     <dl>
         <dt>Name</dt>
         <dd>An optional name used to identify this filter.</dd>
+
+        <dt>Server</dt>
+        <dd>The Dolittle Runtime configuration to use.</dd>
 
         <dt>Filter Id</dt>
         <dd>The UUID that uniquely identifies this filter, e.g. <code>6ba7b810-9dad-11d1-80b4-00c04fd430c8</code>. Note - changing this field will create a new stream without deleting the old one.</dd>
