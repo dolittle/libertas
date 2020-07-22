@@ -40,8 +40,6 @@ module.exports = function (RED: Red) {
         constructor(config: EventHandlerProperties) {
             super(config);
 
-            console.log('Event Handler constructor', config);
-
             this._cancellationSource = new CancellationSource();
 
             this._eventHandlerId = Guid.as(config.eventHandlerId);
