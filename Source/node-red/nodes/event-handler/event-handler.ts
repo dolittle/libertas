@@ -78,7 +78,14 @@ module.exports = function (RED: Red) {
             return (event: any, context: EventContext) => new Promise<void>((resolve, reject) => {
                 const msgs = new Array(outputs).fill(null);
                 msgs[output] = {
-                    context,
+                    executionContext: {
+                        tenantId: context.executionContext.tenantId.toString(),
+                    },
+                    context: {
+                        sequenceNumber: context.sequenceNumber,
+                        eventSourceId: context.eventSourceId.toString(),
+                        occured: context.occurred.toJSDate()
+                    },
                     payload: event,
                     _handleEventPromise: {
                         resolve,

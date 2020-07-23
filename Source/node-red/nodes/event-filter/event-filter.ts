@@ -102,7 +102,14 @@ module.exports = function (RED: Red) {
         createPartitionedFilterEventCallback(): PartitionedFilterEventCallback {
             return (event: any, context: EventContext) => new Promise<PartitionedFilterResult>((resolve, reject) => {
                 this.send({
-                    context,
+                    executionContext: {
+                        tenantId: context.executionContext.tenantId.toString(),
+                    },
+                    context: {
+                        sequenceNumber: context.sequenceNumber,
+                        eventSourceId: context.eventSourceId.toString(),
+                        occured: context.occurred.toJSDate()
+                    },
                     payload: event,
                     _filterEventPromise: {
                         partitioned: true,

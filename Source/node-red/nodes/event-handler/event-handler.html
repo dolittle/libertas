@@ -173,7 +173,7 @@
             type EventContext = {<br>
             &nbsp;&nbsp;sequenceNumber: number;<br>
             &nbsp;&nbsp;eventSourceId: EventSourceId;<br>
-            &nbsp;&nbsp;occurred: DateTime;<br>
+            &nbsp;&nbsp;occurred: Date;<br>
             };
         </code>
     </p>
@@ -182,7 +182,7 @@
         <dd>The event log sequence number, i.e. the position that uniquely identifies this event in the event log.</dd>
         <dt>eventSourceId <span class="property-type">string (UUID)</span></dt>
         <dd>The identifier of the <em>domain entity</em> (aggregate root) that produced the event. E.g. a <em>Customer</em>.</dd>
-        <dt>occurred <span class="property-type">DateTime</span></dt>
+        <dt>occurred <span class="property-type">Date</span></dt>
         <dd>The point in time when the event was comitted to the event store.</dd>
     </dl>
     <p>If an event handler is registered with the Runtime after events have been comitted to the event store, it will receive requests to process all the events that have already been comitted that match the list of defined <em>artifacts</em>.</p>
