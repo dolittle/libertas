@@ -53,7 +53,8 @@
             "event-handler-response": "Distribution/nodes/event-handler-response/event-handler-response.js",
             "entities-sidebar": "Distribution/nodes/entities-sidebar/entities-sidebar.js",
             "http-auth-config": "Distribution/nodes/http-auth-config/http-auth-config.js",
-            "http-auth-header": "Distribution/nodes/http-auth-header/http-auth-header.js"
+            "http-auth-header": "Distribution/nodes/http-auth-header/http-auth-header.js",
+            "set-execution-context": "Distribution/nodes/set-execution-context/set-execution-context.js"
         }
     },
     "devDependencies": {

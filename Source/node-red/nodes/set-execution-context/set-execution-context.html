@@ -1,0 +1,49 @@
+<!-- Copyright (c) Dolittle.  All Rights Reserved.  Licensed under the MIT License. See LICENSE file in the project root for full license information. -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('set-execution-context', {
+        category: 'Dolittle',
+        color: '#FF4B00',
+        defaults: {
+            name: { value: '' },
+            tenantId: { value: '', required: false, validate: RED.validators.regex(/^(|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$/) },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'dolittle.png',
+        label: function () {
+            return this.name || 'Set Execution Context';
+        },
+        oneditprepare: function() {
+            $('#set-execution-properties-use-development-values').click(() => {
+                $('#node-input-tenantId').val('445f8ea8-1a6f-40d7-b2fc-796dba92dc44').change();
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="set-execution-context">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Tenant Id</label>
+        <input type="text" id="node-input-tenantId">
+    </div>
+    <div class="form-row">
+        <button class="red-ui-button" id="set-execution-properties-use-development-values">Set development values</button>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="set-execution-context">
+    <p>Modifies the execution context of a message.</p>
+
+    <h3>Details</h3>
+    <p>The execution context sets the context in which data processing occurs, and is used for security and multi-tenancy. The execution context object contains the following properties:</p>
+    <dl class="message-properties">
+        <dt>tenantId <span class="property-type">string (UUID)</span></dt>
+        <dd>The tenant identifier that is used for scoping resources and data in the multi tenant Dolittle Platform. Note that the Runtime must also be configured with resources for the specified tenantId before it can be used in the code.</dd>
+    </dl>
+    <p>Depending on where the execution flow the execution context is modified, the modification might not have any effect as modification in some execution paths is not allowed to ensure data separation.</p>
+</script>

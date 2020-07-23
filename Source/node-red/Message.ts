@@ -10,9 +10,9 @@ export interface Message<T> {
 }
 
 export interface ExecutionContext {
-    tenantId: TenantId;
+    tenantId?: TenantId;
 }
 
 export interface MessageWithExecutionContext<T> extends Message<T> {
-    executionContext: ExecutionContext;
+    executionContext?: ExecutionContext;
 }

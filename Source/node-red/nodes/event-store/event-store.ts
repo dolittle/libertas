@@ -51,8 +51,8 @@ module.exports = function (RED: Red) {
             if (!this._client) {
                 throw new Error('No client configured');
             }
-            if (!message.executionContext) {
-                throw new Error('No excecution context set');
+            if (!message.executionContext || !message.executionContext.tenantId) {
+                throw new Error('No tenant id configured in the execution context');
             }
             if (!message.payload) {
                 throw new Error('No payload');
