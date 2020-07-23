@@ -118,50 +118,74 @@
         <p>Events to handle:</p>
         <ol id="node-input-artifacts-container"></ol>
     </div>
-    <button class="red-ui-button" id="event-handler-properties-generate-guid">Generate new Id</button>
+    <div class="form-row">
+        <button class="red-ui-button" id="event-handler-properties-generate-guid">Generate new Id</button>
+    </div>
+    <div class="form-tips">
+        <b>Note:</b> the messages from this node should be processed, and passed along to an <em>event handler response</em> node with the <code>msg.payload</code> set to either a <code>boolean</code> or an object with the structure:
+        <br>
+        <code>
+            type EventHandlerResult = {<br>
+            &nbsp;&nbsp;success: boolean;<br>
+            &nbsp;&nbsp;failure: any;<br>
+            };
+        </code>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="event-handler">
-    <p>Registers an event filter with the Dolittle Runtime. A filter defines a stream in the Event Store by deciding which events should be part of the stream.</p>
-
-    <h3>Output</h3>
-    <dl class="message-properties">
-        <dt>payload <span class="property-type">JSON</span>
-    </dl>
-
-    <h3>Details</h3>
-    <p>
-        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
-        in the form of a well defined JSON structure.
-        <br>
-        <code>
-            {<br>
-            &nbsp;"artifact": "(GUID representing the artifact)",<br>
-            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
-            &nbsp;"public": true | false,<br>
-            &nbsp;"content": {<br>
-            &nbsp;&nbsp;"key": "value"<br>
-            &nbsp;}<br>
-            }<br>
-        </code>
-    </p>
+    <p>Registers an event handler with the Dolittle Runtime.</p>
+    <p>An event handler does two things, first it defines a stream that contains events of specific types (<em>artifacts</em>), then it attaches an event processor to the defined stream.</p>
 
     <h3>Properties</h3>
     <dl>
         <dt>Name</dt>
-        <dd>An optional name used to identify this filter.</dd>
-
+        <dd>An optional name used to identify this filter in NodeRED.</dd>
         <dt>Server</dt>
         <dd>The Dolittle Runtime configuration to use.</dd>
-
-        <dt>Filter Id</dt>
-        <dd>The UUID that uniquely identifies this filter, e.g. <code>6ba7b810-9dad-11d1-80b4-00c04fd430c8</code>. Note - changing this field will create a new stream without deleting the old one.</dd>
-
-        <dt>Filter Type</dt>
-        <dd>Either <em>Unpartitioned</em>, <em>Partitioned</em> or <em>Public</em>, defines the kind of stream to create.</dd>
-
+        <dt>Handler Id</dt>
+        <dd>The UUID that uniquely identifies this event handler. Note that changing this field will create a new stream without deleting the old one and cause re-processing of the events, and creating two event handlers with the same identifier will result in runtime errors.</dd>
+        <dt>Partitioned</dt>
+        <dd>Specifies wether or not the event handler is partitioned per <em>event source</em>, which defines the error handling behaviour of the event handler. Whenever processing fails for an event, the event handler will wait for a while before it retries the same event, and will not proceed to process any events committed after the failing one. For an unpartitioned event handler this works on the whole stream, while for a partitioned event handler the processing will halt or proceed for each <em>event source</em> individually.</dd>
         <dt>Scope Id</dt>
-        <dd>Selects the scope of the Event Store to filter events from. Not applicable for <em>Public</em> filters.</dd>
+        <dd>Selects the scope of the event store to handle events from. Events that are committed to the event store within a microservice have the default scope <code>00000000-0000-0000-0000-000000000000</code>, while the other user defined scopes contain events received from other microservices across the <em>event horizon</em>.</dd>
+        <dt>Events to handle</dt>
+        <dd>A list of <em>artifacts</em> that the event handler should handle. Note that adding or removing event types in this list after they have been put into the event handler stream will cause the event handler registration to fail since the streams are immutable.</dd>
     </dl>
 
+    <h3>Outputs</h3>
+    <p>Each event type defined in the <em>Events to handle</em> will be sent on the port corresponding to the position in the list.</p>
+    <dl class="message-properties">
+        <dt>executionContext <span class="property-type">JSON</span></dt>
+        <dd>The execution context the event was comitted in.</dd>
+        <dt>context <span class="property-type">JSON</span>
+        <dd>Event metadata for the event to process.</dd>
+        <dt>payload <span class="property-type">JSON</span>
+        <dd>The content of the event to process.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>When an event is comitted to the event log, each event handler that specifies that it should handle events of that <em>artifact</em> will receive a request to process that event.</p>
+    <p>This request is sent as a message on the output port with properties described above.</p>
+    <p>The event content (<code>msg.payload</code>) and metadata (<code>msg.context</code>) should be processed, and the result must be passed to an <em>event handler response</em> node to respond to the Runtime.</p>
+    <p>The structure of the event metadata is:
+        <code>
+            type EventContext = {<br>
+            &nbsp;&nbsp;sequenceNumber: number;<br>
+            &nbsp;&nbsp;eventSourceId: EventSourceId;<br>
+            &nbsp;&nbsp;occurred: DateTime;<br>
+            };
+        </code>
+    </p>
+    <dl class="message-properties">
+        <dt>sequenceNumber <span class="property-type">number</span></dt>
+        <dd>The event log sequence number, i.e. the position that uniquely identifies this event in the event log.</dd>
+        <dt>eventSourceId <span class="property-type">string (UUID)</span></dt>
+        <dd>The identifier of the <em>domain entity</em> (aggregate root) that produced the event. E.g. a <em>Customer</em>.</dd>
+        <dt>occurred <span class="property-type">DateTime</span></dt>
+        <dd>The point in time when the event was comitted to the event store.</dd>
+    </dl>
+    <p>If an event handler is registered with the Runtime after events have been comitted to the event store, it will receive requests to process all the events that have already been comitted that match the list of defined <em>artifacts</em>.</p>
+    <p>As streams are immutable, the list of handled <em>artifacts</em> cannot be changed so that the event handler stream would contain a different sequence of events if it was newly created. If this is the case, the registration will fail and the event handler will not receive any further requests to process events until the issue has been resolved.</p>
+    <p>For more details about the <code>msg.executionContext</code>, see the <em>set execution context</em> node documentation.</p>
 </script>
