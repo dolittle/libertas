@@ -1,6 +1,7 @@
 FROM dolittle/runtime:5.0.0 as dolittle-runtime
 
 FROM ubuntu:bionic
+SHELL ["/bin/bash", "-c"]
 
 # Install .NET Core dependencies
 RUN apt-get update \
@@ -53,8 +54,7 @@ RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 RUN mkdir -p /data/db /data/configdb \
     && chown -R mongodb:mongodb /data/db /data/configdb \
     && mongod --logpath /var/log/mongodb/initdb.log --replSet "rs0" --bind_ip 0.0.0.0 --fork \
-    && mongo --eval 'rs.initiate({_id: "rs0", members: [{ _id: 0, host: "localhost:27017"}]})' \
-    && mongod --shutdown
+    && mongo --eval 'rs.initiate({_id: "rs0", members: [{ _id: 0, host: "localhost:27017"}]})'
 
 VOLUME /data/db /data/configdb
 
@@ -87,26 +87,69 @@ COPY tsconfig.settings.json ./tsconfig.settings.json
 COPY wallaby.js ./wallaby.js
 RUN yarn && yarn build
 
+# Configure NodeRED
+RUN mkdir -p /root/.node-red
+RUN echo $'\
+[                                                               \n\
+    {                                                           \n\
+        "id": "c844cd09.f0dc5",                                 \n\
+        "type": "dolittle-runtime-config",                      \n\
+        "z": "",                                                \n\
+        "name": "Built-in Runtime",                             \n\
+        "microservice": "f8c60d7c-9d24-4711-882b-a0ae04330ab9", \n\
+        "host": "localhost",                                    \n\
+        "port": "50053"                                         \n\
+    }                                                           \n\
+]                                                               \n\
+' > /root/.node-red/flows.json
+RUN echo $'\
+// Copyright (c) Dolittle. All rights reserved.                                                                     \n\
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.               \n\
+module.exports = {                                                                                                  \n\
+    uiPort: 1880,                                                                                                   \n\
+    flowFile: "flows.json",                                                                                         \n\
+    flowFilePretty: true,                                                                                           \n\
+    paletteCategories: ["subflows", "Dolittle", "common", "function", "network", "sequence", "parser", "storage"],  \n\
+    logging: {                                                                                                      \n\
+        console: {                                                                                                  \n\
+            level: "debug",                                                                                         \n\
+            metrics: false,                                                                                         \n\
+            audit: false                                                                                            \n\
+        }                                                                                                           \n\
+    },                                                                                                              \n\
+    editorTheme: {                                                                                                  \n\
+        page: {                                                                                                     \n\
+            css: "/libertas/node_modules/@node-red-contrib-themes/solarized-dark/theme.css"                         \n\
+        },                                                                                                          \n\
+        projects: {                                                                                                 \n\
+            enabled: false                                                                                          \n\
+        }                                                                                                           \n\
+    }                                                                                                               \n\
+};                                                                                                                  \n\
+' > /root/.node-red/settings.js
+
 VOLUME /root/.node-red
 
 # Configure supervisord to run MongoDB + Dolittle Runtime + NodeRED
-SHELL ["/bin/bash", "-c"]
 RUN echo $'\
-[supervisord] \n\
-nodaemon=true \n\
-[program:mongod] \n\
-command=/usr/bin/mongod --replSet "rs0" --bind_ip 0.0.0.0 \n\
-stdout_logfile=/dev/stdout \n\
-stdout_logfile_maxbytes=0 \n\
-[program:dolittle-runtime] \n\
-directory=/bin/dolittle-runtime \n\
-command=/usr/bin/dotnet "Dolittle.Runtime.Server.dll" \n\
-stdout_logfile=/dev/stdout \n\
-stdout_logfile_maxbytes=0 \n\
-[program:node-red] \n\
-command=/usr/bin/node /libertas/node_modules/node-red/red.js \n\
-stdout_logfile=/dev/stdout \n\
-stdout_logfile_maxbytes=0 \n\
+[supervisord]                                                   \n\
+nodaemon=true                                                   \n\
+                                                                \n\
+[program:mongod]                                                \n\
+command=/usr/bin/mongod --replSet "rs0" --bind_ip 0.0.0.0       \n\
+stdout_logfile=/dev/stdout                                      \n\
+stdout_logfile_maxbytes=0                                       \n\
+                                                                \n\
+[program:dolittle-runtime]                                      \n\
+directory=/bin/dolittle-runtime                                 \n\
+command=/usr/bin/dotnet "Dolittle.Runtime.Server.dll"           \n\
+stdout_logfile=/dev/stdout                                      \n\
+stdout_logfile_maxbytes=0                                       \n\
+                                                                \n\
+[program:node-red]                                              \n\
+command=/usr/bin/node /libertas/node_modules/node-red/red.js    \n\
+stdout_logfile=/dev/stdout                                      \n\
+stdout_logfile_maxbytes=0                                       \n\
 ' > /etc/supervisord.conf
 
 # Expose all the ports that are usefull
