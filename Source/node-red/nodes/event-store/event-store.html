@@ -29,8 +29,8 @@
 
     <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>executionContext <span class="property-type">JSON</span></dt>
-        <dt>payload <span class="property-type">JSON</span></dt>
+        <dt>executionContext <span class="property-type">object</span></dt>
+        <dt>payload <span class="property-type">object</span></dt>
     </dl>
 
     <h3>Outputs</h3>
@@ -56,7 +56,7 @@
         <dd>The identifier of the <em>domain entity</em> (aggregate root) that produced the event. E.g. a <em>Customer</em>.</dd>
         <dt>artifact <span class="property-type">string (UUID)</span></dt>
         <dd>The identifier of the event <em>artifact</em>, i.e. the type of the event.</dd>
-        <dt>content <span class="property-type">JSON</span></dt>
+        <dt>content <span class="property-type">object</span></dt>
         <dd>The content of the event, can be any kind of object but must serialize to and from JSON. Note that the content structure must be the same for instances of the same artifact.</dd>
         <dt>public <span class="property-type">boolean</span></dt>
         <dd>An optional (default is <code>false</code>) value indicating if the event is public. Only public events can be shared between microservices.</dd>

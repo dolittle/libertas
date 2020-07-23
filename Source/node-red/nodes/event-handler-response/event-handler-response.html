@@ -18,27 +18,29 @@
 </script>
 
 <script type="text/html" data-help-name="event-handler-response">
-    <p>Registers an event filter with the Dolittle Runtime. A filter defines a stream in the Event Store by deciding which events should be part of the stream.</p>
+    <p>Passes event handler results back to the Dolittle Runtime to mark the processing as complete.</p>
+    <p>This responder can be reused for multiple <em>event handler</em> nodes, or requests from a single <em>event handler</em> node can be passed to different responders as long as each request is passed to exactly one responder.</p>
 
-    <h3>Output</h3>
+    <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">JSON</span>
+        <dt>payload <span class="property-type">boolean | object</span>
     </dl>
 
     <h3>Details</h3>
-    <p>
-        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
-        in the form of a well defined JSON structure.
+    <p>The response to the Runtime is read from <code>msg.payload</code> and must be either a <code>boolean</code> indicating that processing completed successfully or if it failed and should be retried later, or an object with the structure:
         <br>
         <code>
-            {<br>
-            &nbsp;"artifact": "(GUID representing the artifact)",<br>
-            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
-            &nbsp;"public": true | false,<br>
-            &nbsp;"content": {<br>
-            &nbsp;&nbsp;"key": "value"<br>
-            &nbsp;}<br>
-            }<br>
+            type EventHandlerResult = {<br>
+            &nbsp;&nbsp;success: boolean;<br>
+            &nbsp;&nbsp;failure: any;<br>
+            };
         </code>
     </p>
+    <dl class="message-properties">
+        <dt>success <span class="property-type">boolean</span></dt>
+        <dd>Indicates whether processing completed successfully, or if it failed and should be retried later.</dd>
+        <dt>failure <span class="property-type">object | string</span></dt>
+        <dd>A string or an object with details about why the processing failed. The contents will be serialized as JSON and stored in the event store, and sent back to the event handler when the processing is retried.</dd>
+    </dl>
+    <p>The messages from <em>event handler</em> nodes contain special properties that are required for responding to the Runtime, so ensure that these messages are not cloned and that you only modify the <code>msg.payload</code>.</p>
 </script>
