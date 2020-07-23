@@ -257,12 +257,20 @@ module.exports = {
     // Customising the editor
     editorTheme: {
         page: {
-            css: path.join(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'solarized-dark', 'theme.css')
+            title: 'Dolittle Libertas Testbench',
+            css: path.join(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'solarized-dark', 'theme.css'),
+            favicon: path.join(__dirname, '..', 'images', 'favicon.png')
         },
 
         projects: {
             // To enable the Projects feature, set this value to true
             enabled: false
+        },
+
+        header: {
+            title: 'Libertas Testbench',
+            image: path.join(__dirname, '..', 'images', 'header.png'),
+            url: 'https://dolittle.io'
         }
     }
 };
