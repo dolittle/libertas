@@ -1,7 +1,6 @@
 FROM dolittle/runtime:5.0.0 as dolittle-runtime
 
 FROM ubuntu:bionic
-SHELL ["/bin/bash", "-c"]
 
 # Install .NET Core dependencies
 RUN apt-get update \
@@ -47,14 +46,16 @@ RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
     && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" > /etc/apt/sources.list.d/mongodb-org-4.2.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        mongodb-org \
+        mongodb-org-server \
+        mongodb-org-shell \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup MongoDB as single-node replicaset
 RUN mkdir -p /data/db /data/configdb \
     && chown -R mongodb:mongodb /data/db /data/configdb \
     && mongod --logpath /var/log/mongodb/initdb.log --replSet "rs0" --bind_ip 0.0.0.0 --fork \
-    && mongo --eval 'rs.initiate({_id: "rs0", members: [{ _id: 0, host: "localhost:27017"}]})'
+    && mongo --eval 'rs.initiate({_id: "rs0", members: [{ _id: 0, host: "localhost:27017"}]})' \
+    && mongod --shutdown
 
 VOLUME /data/db /data/configdb
 
@@ -72,7 +73,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
         nodejs \
         yarn \
     && rm -rf /var/lib/apt/lists/*
@@ -88,6 +90,8 @@ COPY tsconfig.settings.json ./tsconfig.settings.json
 COPY wallaby.js ./wallaby.js
 RUN yarn && yarn build
 
+
+SHELL ["/bin/bash", "-c"]
 # Configure NodeRED
 RUN mkdir -p /root/.node-red
 RUN echo $'\
@@ -122,7 +126,7 @@ module.exports = {                                                              
         page: {                                                                                                     \n\
             title: "Dolittle Libertas Testbench",                                                                   \n\
             css: "/libertas/node_modules/@node-red-contrib-themes/solarized-dark/theme.css",                        \n\
-            favicon: "/libertas/Testbench/images/facicon.png"                                                       \n\
+            favicon: "/libertas/Testbench/images/favicon.png"                                                       \n\
         },                                                                                                          \n\
         header: {                                                                                                   \n\
             title: "Libertas Testbench",                                                                            \n\
