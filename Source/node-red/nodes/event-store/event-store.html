@@ -14,6 +14,21 @@
             return 'Event Store';
         }
     });
+
+    function DolittleCopyExampleEvent() {
+        const generateGuid = () => Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                                        .flatMap(n => [n >> 4, n & 0xF])
+                                        .map((n, i) => i == 12 ? 4 : i == 16 ? (8 + (n & 0x3)) : n)
+                                        .reduce((s, n, i) => s + ((i > 7 && i%4 == 0 && i < 24) ? '-' : '') + n.toString(16), '');
+        
+        const example = JSON.stringify({
+            artifact: generateGuid(),
+            eventSourceId: generateGuid(),
+            public: false,
+            content: {}
+        }, undefined, '\t');
+        navigator.clipboard.writeText(example);
+    }
 </script>
 
 <script type="text/html" data-template-name="event-store">
@@ -32,6 +47,9 @@
         <dt>executionContext <span class="property-type">object</span></dt>
         <dt>payload <span class="property-type">object</span></dt>
     </dl>
+    <p>
+        <button class="red-ui-button" onclick="DolittleCopyExampleEvent()">Copy example event</button>
+    </p>
 
     <h3>Outputs</h3>
     <p>If successful, the committed events containing additional information added by the Runtime is sent to the output port.</p>
