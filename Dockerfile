@@ -81,6 +81,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 WORKDIR /libertas
 COPY Source ./Source
 COPY Testbench/package.json ./Testbench/package.json
+COPY Testbench/images ./Testbench/images
 COPY package.json ./package.json
 COPY .eslintrc.js ./.eslintrc.js
 COPY tsconfig.settings.json ./tsconfig.settings.json
@@ -119,7 +120,14 @@ module.exports = {                                                              
     },                                                                                                              \n\
     editorTheme: {                                                                                                  \n\
         page: {                                                                                                     \n\
-            css: "/libertas/node_modules/@node-red-contrib-themes/solarized-dark/theme.css"                         \n\
+            title: "Dolittle Libertas Testbench",                                                                   \n\
+            css: "/libertas/node_modules/@node-red-contrib-themes/solarized-dark/theme.css",                        \n\
+            favicon: "/libertas/Testbench/images/facicon.png"                                                       \n\
+        },                                                                                                          \n\
+        header: {                                                                                                   \n\
+            title: "Libertas Testbench",                                                                            \n\
+            image: "/libertas/Testbench/images/header.png",                                                         \n\
+            url: "https://dolittle.io"                                                                              \n\
         },                                                                                                          \n\
         projects: {                                                                                                 \n\
             enabled: false                                                                                          \n\
