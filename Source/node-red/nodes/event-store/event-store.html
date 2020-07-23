@@ -24,28 +24,42 @@
 </script>
 
 <script type="text/html" data-help-name="event-store">
-    <p>Enables committing private and public events to the Dolittle Event Store API</p>
+    <p>Commits events from <code>msg.payload</code> to the event log using the Event Store API of the Dolittle Runtime.</p>
+    <p>The <code>msg.payload</code> can be a single event or an array of events to commit as a single transaction.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">JSON</span>
+        <dt>executionContext <span class="property-type">JSON</span></dt>
+        <dt>payload <span class="property-type">JSON</span></dt>
     </dl>
 
+    <h3>Outputs</h3>
+    <p>If successful, the committed events containing additional information added by the Runtime is sent to the output port.</p>
+    <p>If the commit failed, a failure message will be sent to the output port.</p>
+
     <h3>Details</h3>
-    <p>
-        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
-        in the form of a well defined JSON structure.
+    <p>The event or events received in <code>msg.payload</code> will be comitted to the event log of the tenant specified in <code>msg.executionContext</code>.</p>
+    <p>The events are comitted in a single transaction, which means that either all of the events will be added to the event log - or none of them.</p>
+    <p>The structure of an uncomitted event is:
         <br>
         <code>
-            {<br>
-            &nbsp;"artifact": "(GUID representing the artifact)",<br>
-            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
-            &nbsp;"public": true | false,<br>
-            &nbsp;"content": {<br>
-            &nbsp;&nbsp;"key": "value"<br>
-            &nbsp;}<br>
-            }<br>    
+            type UncommittedEvent = {<br>
+            &nbsp;&nbsp;eventSourceId: EventSourceId;<br>
+            &nbsp;&nbsp;artifact: ArtifactId;<br>
+            &nbsp;&nbsp;content: any;<br>
+            &nbsp;&nbsp;public?: boolean;<br>
+            };
         </code>
     </p>
-
+    <dl class="message-properties">
+        <dt>eventSourceId <span class="property-type">string (UUID)</span></dt>
+        <dd>The identifier of the <em>domain entity</em> (aggregate root) that produced the event. E.g. a <em>Customer</em>.</dd>
+        <dt>artifact <span class="property-type">string (UUID)</span></dt>
+        <dd>The identifier of the event <em>artifact</em>, i.e. the type of the event.</dd>
+        <dt>content <span class="property-type">JSON</span></dt>
+        <dd>The content of the event, can be any kind of object but must serialize to and from JSON. Note that the content structure must be the same for instances of the same artifact.</dd>
+        <dt>public <span class="property-type">boolean</span></dt>
+        <dd>An optional (default is <code>false</code>) value indicating if the event is public. Only public events can be shared between microservices.</dd>
+    </dl>
+    <p>For more details about the <code>msg.executionContext</code>, see the <em>set execution context</em> node documentation.</p>
 </script>
