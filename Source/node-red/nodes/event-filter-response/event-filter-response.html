@@ -18,28 +18,30 @@
 </script>
 
 <script type="text/html" data-help-name="event-filter-response">
-    <p>Registers an event filter with the Dolittle Runtime. A filter defines a stream in the Event Store by deciding which events should be part of the stream.</p>
+    <p>Passes event filter results back to the Dolittle Runtime to mark the processing as complete.</p>
+    <p>This node can be reused for multiple <em>event filter</em> nodes, or requests from a single <em>event filter</em> node can be passed to different responders as long as each request is passed to exactly one responed.</p>
 
-    <h3>Output</h3>
+    <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">JSON</span>
+        <dt>payload <span class="property-type">boolean | JSON</span>
     </dl>
 
     <h3>Details</h3>
-    <p>
-        <code>msg.payload</code> is used to hold the metadata and content of the event to publish
-        in the form of a well defined JSON structure.
+    <p>For requests coming from an <em>event filter</em> node configured as <em>Unpartitioned</em>, the <code>msg.payload</code> must be a <code>boolean</code> that decides whether the processed event should be included in the stream or not.</p>
+    <p>For requests coming from an <em>event filter</em> node configured as <em>Partitioned</em> or <em>Public</em>, the <code>msg.payload</code> must be an object with the structure:
         <br>
         <code>
-            {<br>
-            &nbsp;"artifact": "(GUID representing the artifact)",<br>
-            &nbsp;"eventSourceId": "{GUID representing the event source}",<br>
-            &nbsp;"public": true | false,<br>
-            &nbsp;"content": {<br>
-            &nbsp;&nbsp;"key": "value"<br>
-            &nbsp;}<br>
-            }<br>
+            type FilterResult = {<br>
+            &nbsp;&nbsp;shouldInclude: boolean;<br>
+            &nbsp;&nbsp;partitionId: PartitionId;<br>
+            };
         </code>
     </p>
-
+    <dl class="message-properties">
+        <dt>shouldInclude <span class="property-type">boolean</span></dt>
+        <dd>Decides whether the processed event should be included in the stream or not.</dd>
+        <dt>partitionId <span class="property-type">string (UUID)</span></dt>
+        <dd>Decides in which partition of the stream the processed event should be placed.</dd>
+    </dl>
+    <p>The messages from <em>event filter</em> nodes contain special properties that are required for responding to the Runtime, so ensure that these messages are not cloned and that you only modify the <code>msg.payload</code>.</p>
 </script>

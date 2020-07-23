@@ -30,6 +30,8 @@
             });
             $('#node-input-filterType').change(() => {
                 $('#node-row-scopeId').css('display', $('#node-input-filterType').val() == 'public' ? 'none' : '');
+                $('#node-tip-processing-unpartitioned').css('display', $('#node-input-filterType').val() == 'unpartitioned' ? '' : 'none');
+                $('#node-tip-processing-partitioned-public').css('display', $('#node-input-filterType').val() == 'unpartitioned' ? 'none' : '');
             });
         }
     });
@@ -60,7 +62,22 @@
         <label for="node-input-scopeId"><i class="icon-bookmark"></i> Scope Id</label>
         <input type="text" id="node-input-scopeId" placeholder="00000000-0000-0000-0000-000000000000">
     </div>
-    <button class="red-ui-button" id="event-filter-properties-generate-guid">Generate new Id</button>
+    <div class="form-row">
+        <button class="red-ui-button" id="event-filter-properties-generate-guid">Generate new Id</button>
+    </div>
+    <div class="form-tips" id="node-tip-processing-unpartitioned">
+        <b>Note:</b> the messages from this node should be processed, and passed along to an <em>event filter response</em> node with the <code>msg.payload</code> set to a <code>boolean</code> that decides whether the processed event should be included in the stream or not.
+    </div>
+    <div class="form-tips" id="node-tip-processing-partitioned-public">
+        <b>Note:</b> the messages from this node should be processed, and passed along to an <em>event filter response</em> node with the <code>msg.payload</code> set to an object with the structure:
+        <br>
+        <code>
+            type FilterResult = {<br>
+            &nbsp;&nbsp;shouldInclude: boolean;<br>
+            &nbsp;&nbsp;partitionId: PartitionId;<br>
+            };
+        </code>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="event-filter">
