@@ -1,6 +1,6 @@
 {
     "name": "@dolittle/node-red",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "",
     "author": "",
     "license": "MIT",
@@ -69,7 +69,7 @@
     },
     "dependencies": {
         "@dolittle/fluentui.aurelia": "2.0.0",
-        "@dolittle/libertas": "2.0.0",
+        "@dolittle/libertas": "2.0.3",
         "@dolittle/rudiments": "3.0.0",
         "@dolittle/sdk": "2.1.1",
         "@dolittle/sdk.artifacts": "2.1.1",

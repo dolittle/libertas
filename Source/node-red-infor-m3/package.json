@@ -1,6 +1,6 @@
 {
     "name": "@dolittle/node-red-infor-m3",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "",
     "author": "",
     "license": "MIT",
@@ -49,7 +49,7 @@
         "cpx": "1.5.0"
     },
     "dependencies": {
-        "@dolittle/node-red": "2.0.1",
+        "@dolittle/node-red": "2.0.3",
         "@dolittle/rudiments": "3.0.0",
         "@types/node-fetch": "2.5.7",
         "@types/xml2js": "0.4.5",
