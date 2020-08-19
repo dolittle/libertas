@@ -2,17 +2,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 import { NodeProperties, Red } from 'node-red';
-import { Node, registerNodeType } from '@dolittle/node-red';
+import { Node, registerNodeType, messageHandlerNode } from '@dolittle/node-red';
 import fetch from 'node-fetch';
 import { InforM3Config } from '../infor-m3-config/infor-m3-config';
+import { SendCallback } from '@dolittle/node-red/Distribution/MessageHandlerNode';
+import { Message } from '@dolittle/node-red/Distribution/Message';
 
-export interface InforM3Bulk {
+interface InforM3BulkProperties extends NodeProperties {
+    server: string;
     name: string;
     program: string;
     transaction: string;
-    maxRecords: number;
-    maxBulk: number;
-    maxParallel: number;
+    maxrecords: string;
+    maxbulk: string;
+    maxparallel: string;
     columns: string[];
 }
 
@@ -78,72 +81,65 @@ export class BulkRequest {
     }
 }
 
+interface BulkRequestMessage extends Message<any | any[]> {}
+
 module.exports = function (RED: Red) {
-
     @registerNodeType(RED, 'infor-m3-bulk')
-    class InforM3Bulk extends Node implements InforM3Bulk {
+    @messageHandlerNode
+    class InforM3Bulk extends Node {
         private _server?: InforM3Config;
-        name: string = '';
-        program: string = '';
-        transaction: string = '';
-        maxRecords: number = 0;
-        maxBulk: number = 0;
-        maxParallel: number = 1;
-        columns: string[] = [];
+        private _program: string;
+        private _transaction: string;
+        private _maxRecords: number;
+        private _maxBulk: number;
+        private _maxParallel: number;
+        private _columns: string[];
 
-        constructor(config: NodeProperties) {
+        constructor(config: InforM3BulkProperties) {
             super(config);
 
-            this.name = config.name;
+            this._server = this.getConfigurationFromNode(config.server);
+            this._program = config.program;
+            this._transaction = config.transaction;
+            this._maxRecords = parseInt(config.maxrecords, 10) || 0;
+            this._maxBulk = parseInt(config.maxbulk, 10) || 0;
+            this._maxParallel = parseInt(config.maxparallel, 10) || 1;
+            this._columns = config.columns || [];
+        }
 
-            const c = config as any;
-            this._server = RED.nodes.getNode(c.server) as any as InforM3Config;
-            this.program = c.program;
-            this.transaction = c.transaction;
-            this.maxRecords = parseInt(c.maxrecords, 10) || 0;
-            this.maxBulk = parseInt(c.maxbulk, 10) || 0;
-            this.maxParallel = parseInt(c.maxparallel, 10) || 1;
-            this.columns = c.columns;
+        async handle(message: BulkRequestMessage, send: SendCallback) {
+            try {
+                const transactions = (Array.isArray(message.payload) ? message.payload : [message.payload]) as any[];
 
-            this.on('input', async (msg: any, send: (msgs: any[]) => void, done: (err?: any) => void) => {
-                // Pre-1.0 polyfills
-                send = send || ((msgs: any[]) => this.send(msgs));
-                done = done || ((err?: any) => { if (err) this.error(err, msg); });
+                const bulks: any[][] = [];
 
-                try {
-                    const transactions = (Array.isArray(msg.payload) ? msg.payload : [msg.payload]) as any[];
+                if (this._maxBulk > 0) {
+                    let bulkCount = transactions.length / this._maxBulk;
+                    if (Math.floor(bulkCount) !== bulkCount) bulkCount = Math.ceil(bulkCount);
 
-                    const bulks: any[][] = [];
-
-                    if (this.maxBulk > 0) {
-                        let bulkCount = transactions.length / this.maxBulk;
-                        if (Math.floor(bulkCount) !== bulkCount) bulkCount = Math.ceil(bulkCount);
-
-                        let position = 0;
-                        for (let n = 0; n < bulkCount; n++) {
-                            bulks.push(transactions.slice(position, position + this.maxBulk));
-                            position += this.maxBulk;
-                        }
-                    } else {
-                        bulks.push(transactions);
+                    let position = 0;
+                    for (let n = 0; n < bulkCount; n++) {
+                        bulks.push(transactions.slice(position, position + this._maxBulk));
+                        position += this._maxBulk;
                     }
-
-                    const progress = {
-                        completed: 0,
-                        total: bulks.length,
-                    };
-                    const processors: Promise<void>[] = [];
-                    for (let n = 0; n < this.maxParallel; n++) {
-                        processors.push(this.startProcessing(msg, bulks, progress, send));
-                    }
-                    await Promise.all(processors);
-
-                    send([null, msg]);
-                    done();
-                } catch (error) {
-                    done(error);
+                } else {
+                    bulks.push(transactions);
                 }
-            });
+
+                const progress = {
+                    completed: 0,
+                    total: bulks.length,
+                };
+                const processors: Promise<void>[] = [];
+                for (let n = 0; n < this._maxParallel; n++) {
+                    processors.push(this.startProcessing(message, bulks, progress, send));
+                }
+                await Promise.all(processors);
+
+                send([null, message]);
+            } catch (error) {
+                this.error(error, message);
+            }
         }
 
         async startProcessing(msg: any, bulks: any[][], progress: any, send: (msgs: any[]) => void) {
@@ -171,7 +167,7 @@ module.exports = function (RED: Red) {
         }
 
         async processBulk(bulk: any[]) {
-            const bulkRequest = new BulkRequest(this.program, this.maxRecords, this.transaction, this.columns);
+            const bulkRequest = new BulkRequest(this._program, this._maxRecords, this._transaction, this._columns);
             for (const request of bulk) {
                 bulkRequest.addTransaction(request.record, request.transaction, request.columns);
             }
