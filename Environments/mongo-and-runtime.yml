@@ -10,10 +10,6 @@ services:
  
   runtime:
     image: dolittle/runtime:5.0.0-rc.5
-    depends_on: 
-      - mongo
-    links:
-      - mongo
     volumes:
       - ${PWD}/resources.json:/app/.dolittle/resources.json
       - ${PWD}/tenants.json:/app/.dolittle/tenants.json
