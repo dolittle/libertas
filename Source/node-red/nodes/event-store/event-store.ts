@@ -56,48 +56,46 @@ module.exports = function (RED: Red) {
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
             this._client.executionContextManager.currentFor(message.executionContext.tenantId);
-            const response = await this._client.eventStore.commit(events);
+            const result = await this._client.eventStore.commit(events);
 
-            if (response.failed) {
-                send({
-                    payload: {
-                        committed: false,
-                        failureId: response.failure?.id.toString(),
-                        failureReason: response.failure?.reason,
-                    },
-                });
+            const response = message as any;
+            if (result.failed) {
+                response.payload = {
+                    committed: false,
+                    failureId: result.failure?.id.toString(),
+                    failureReason: result.failure?.reason,
+                };
             } else {
-                send({
-                    payload: {
-                        committed: true,
-                        events: response.events.toArray().map(event => ({
-                            artifact: {
-                                id: event.type.id.toString(),
-                                generation: event.type.generation,
+                response.payload = {
+                    committed: true,
+                    events: result.events.toArray().map(event => ({
+                        artifact: {
+                            id: event.type.id.toString(),
+                            generation: event.type.generation,
+                        },
+                        content: event.content,
+                        context: {
+                            sequenceNumber: event.eventLogSequenceNumber,
+                            eventSourceId: event.eventSourceId.toString(),
+                            occured: event.occurred.toString(),
+                            public: event.isPublic,
+                            executionContext: {
+                                microserviceId: event.executionContext.microserviceId.toString(),
+                                tenantId: event.executionContext.tenantId.toString(),
+                                version: event.executionContext.version.toString(),
+                                environment: event.executionContext.environment,
+                                correlationId: event.executionContext.correlationId.toString(),
+                                claims: event.executionContext.claims.toArray().map(claim => ({
+                                    key: claim.key,
+                                    value: claim.value,
+                                    valueType: claim.valueType,
+                                })),
                             },
-                            content: event.content,
-                            context: {
-                                sequenceNumber: event.eventLogSequenceNumber,
-                                eventSourceId: event.eventSourceId.toString(),
-                                occured: event.occurred.toString(),
-                                public: event.isPublic,
-                                executionContext: {
-                                    microserviceId: event.executionContext.microserviceId.toString(),
-                                    tenantId: event.executionContext.tenantId.toString(),
-                                    version: event.executionContext.version.toString(),
-                                    environment: event.executionContext.environment,
-                                    correlationId: event.executionContext.correlationId.toString(),
-                                    claims: event.executionContext.claims.toArray().map(claim => ({
-                                        key: claim.key,
-                                        value: claim.value,
-                                        valueType: claim.valueType,
-                                    })),
-                                },
-                            },
-                        })),
-                    },
-                });
+                        },
+                    })),
+                };
             }
+            send(response);
         }
     }
 };
