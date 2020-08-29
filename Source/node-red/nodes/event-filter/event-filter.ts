@@ -1,19 +1,17 @@
 // Copyright (c) Dolittle. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-import { NodeProperties, Red, NodeId } from 'node-red';
+import { NodeProperties, Red } from 'node-red';
 
 import { Node, registerNodeType } from '../../Node';
 
 import { Guid } from '@dolittle/rudiments';
 import { Client } from '@dolittle/sdk';
-import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
 import { FilterId, FilterEventCallback, PartitionedFilterEventCallback, PartitionedFilterResult } from '@dolittle/sdk.events.filtering';
-import { ScopeId } from '@dolittle/sdk.events.handling';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
-import { EventContext } from '@dolittle/sdk.events';
+import { EventContext, ScopeId } from '@dolittle/sdk.events';
 
 interface EventFilterProperties extends NodeProperties {
     server: string;

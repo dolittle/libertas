@@ -7,14 +7,14 @@ import { Node, registerNodeType } from '../../Node';
 
 import { Guid } from '@dolittle/rudiments';
 import { Client } from '@dolittle/sdk';
-import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
-import { FilterId, FilterEventCallback, PartitionedFilterEventCallback, PartitionedFilterResult } from '@dolittle/sdk.events.filtering';
-import { ScopeId, EventHandlerId } from '@dolittle/sdk.events.handling';
+import { ArtifactId } from '@dolittle/sdk.artifacts';
+import { EventContext, ScopeId } from '@dolittle/sdk.events';
+import { EventHandlerId } from '@dolittle/sdk.events.handling';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 
-import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
-import { EventContext } from '@dolittle/sdk.events';
 import { EventHandlerSignature } from '@dolittle/sdk.events.handling/Distribution/EventHandlerSignature';
+
+import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
 
 interface EventHandlerProperties extends NodeProperties {
     server: string;
