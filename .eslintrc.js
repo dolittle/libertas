@@ -20,6 +20,7 @@ module.exports = {
         '**/.eslintrc.js',
     ],
     rules: {
+        'import/no-extraneous-dependencies': 'off',
         '@typescript-eslint/naming-convention': [
             'error',
             { selector: 'typeLike', format: ['PascalCase'], filter: { regex: '^(__String|[A-Za-z]+_[A-Za-z]+)$', match: false } },
