@@ -3,7 +3,7 @@
 
 import { Node } from 'node-red';
 import { Message } from './Message';
-import { Constructor } from '@dolittle/rudiments';
+import { Constructor } from '@dolittle/types';
 
 export type SendCallback = (messages: any | any[] | any[][]) => void;
 export type DoneCallback = (error?: Error) => void;
