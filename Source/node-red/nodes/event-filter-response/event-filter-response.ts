@@ -3,8 +3,8 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { EventContext } from '@dolittle/sdk.events';
-import { PartitionedFilterResult, PartitionId } from '@dolittle/sdk.events.filtering';
+import { EventContext, PartitionId } from '@dolittle/sdk.events';
+import { PartitionedFilterResult } from '@dolittle/sdk.events.filtering';
 
 import { Node, registerNodeType } from '../../Node';
 import { messageHandlerNode, SendCallback } from '../../MessageHandlerNode';

@@ -42,9 +42,9 @@ module.exports = function (RED: Red) {
             super(config);
 
             this._server = this.getConfigurationFromNode(config.server);
-            this._client = this._server?.clientBuilder.configureLogging(_ => _.transports = this._loggerTransport).build();
+            this._client = this._server?.clientBuilder.withLogging(_ => _.useWinston(w => w.transports = this._loggerTransport)).build();
 
-            // TODO: Setup on close to handle stopping graciouslly
+            // TODO: Setup on close to handle stopping gracefully
         }
 
         async handle(message: Request, send: SendCallback): Promise<void> {
@@ -60,7 +60,7 @@ module.exports = function (RED: Red) {
 
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
-            this._client.executionContextManager.currentFor(message.executionContext.tenantId);
+            this._client.executionContextManager.forTenant(message.executionContext.tenantId);
             await this._client.eventStore.commit(events);
 
             console.log('Inserted events');

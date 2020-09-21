@@ -23,7 +23,7 @@ module.exports = function (RED: Red) {
             super(config);
 
             if (config.tenantId) {
-                this._tenantId = Guid.as(config.tenantId);
+                this._tenantId = TenantId.from(config.tenantId);
             }
         }
 
@@ -33,7 +33,7 @@ module.exports = function (RED: Red) {
             }
 
             if (this._tenantId !== undefined) {
-                message.executionContext.tenantId = this._tenantId.toString();
+                message.executionContext.tenantId = this._tenantId;
             }
 
             send(message);

@@ -5,15 +5,12 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 
 import { Node, registerNodeType } from '../../Node';
 
-import { Guid } from '@dolittle/rudiments';
 import { Client } from '@dolittle/sdk';
-import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
 import { FilterId, FilterEventCallback, PartitionedFilterEventCallback, PartitionedFilterResult } from '@dolittle/sdk.events.filtering';
-import { ScopeId } from '@dolittle/sdk.events.handling';
+import { EventContext, ScopeId } from '@dolittle/sdk.events';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
-import { EventContext } from '@dolittle/sdk.events';
 
 interface EventFilterProperties extends NodeProperties {
     server: string;
@@ -44,8 +41,8 @@ module.exports = function (RED: Red) {
 
             this._cancellationSource = new CancellationSource();
 
-            this._filterId = Guid.as(config.filterId);
-            this._scopeId = config.scopeId ? Guid.as(config.scopeId) : Guid.empty;
+            this._filterId = FilterId.from(config.filterId);
+            this._scopeId = config.scopeId ? ScopeId.from(config.scopeId) : ScopeId.default;
             switch (config.filterType) {
                 case 'partitioned':
                     this._filterType = FilterType.Partitioned;
@@ -65,24 +62,28 @@ module.exports = function (RED: Red) {
 
             this._server = this.getConfigurationFromNode(config.server);
             this._client = this._server?.clientBuilder
-                .configureLogging(_ => {
-                    _.level = 'debug';
-                    _.transports = this._loggerTransport;
-                })
-                .withFilters(_ => {
-                _.for(this._filterId, __ => {
-                    if (this._filterType === FilterType.Public) {
-                        __.public().handle(this.createPartitionedFilterEventCallback());
-                    } else {
-                        const ___ = __.private().inScope(this._scopeId);
-                        if (this._filterType === FilterType.Partitioned) {
-                            ___.partitioned().handle(this.createPartitionedFilterEventCallback());
+                .withLogging(_ => _.useWinston(w => {
+                    w.level = 'debug';
+                    w.transports = this._loggerTransport;
+                }))
+                .withEventStore(es => {
+                    es.withFilters(f => {
+                        if (this._filterType === FilterType.Public) {
+                            f.createPublicFilter(this._filterId.value, __ => {
+                                __.handle(this.createPartitionedFilterEventCallback());
+                            });
                         } else {
-                            ___.handle(this.createFilterEventCallback());
+                            f.createPrivateFilter(this._filterId.value, __ => {
+                                const ___ = __.inScope(this._scopeId.value);
+                                if (this._filterType === FilterType.Partitioned) {
+                                    ___.partitioned().handle(this.createPartitionedFilterEventCallback());
+                                } else {
+                                    ___.handle(this.createFilterEventCallback());
+                                }
+                            });
                         }
-                    }
-                });
-            }).withCancellation(this._cancellationSource.cancellation).build();
+                    });
+                }).withCancellation(this._cancellationSource.cancellation).build();
         }
 
         createFilterEventCallback(): FilterEventCallback {

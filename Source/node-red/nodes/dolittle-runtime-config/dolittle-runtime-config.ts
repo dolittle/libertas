@@ -27,14 +27,14 @@ interface DolittleRuntimeProperties extends NodeProperties {
 module.exports = function (RED: Red) {
     @registerNodeType(RED, 'dolittle-runtime-config')
     class DolittleRuntimeConfig extends ConfigurationNode<DolittleRuntimeProperties> implements DolittleRuntimeConfig {
-        readonly microservice: MicroserviceId = Guid.empty;
+        readonly microservice: MicroserviceId = MicroserviceId.notApplicable;
         readonly host: string = '';
         readonly port: number = 0;
 
         constructor(config: DolittleRuntimeProperties) {
             super(config);
 
-            this.microservice = Guid.parse(config.microservice);
+            this.microservice = MicroserviceId.from(config.microservice);
             this.host = config.host;
             this.port = config.port;
         }
@@ -45,7 +45,7 @@ module.exports = function (RED: Red) {
         }
 
         get clientBuilder(): ClientBuilder {
-            return Client.for(this.microservice).connectTo(this.host, this.port);
+            return Client.create().forMicroservice(this.microservice).connectToRuntime(this.host, this.port);
         }
     }
 };
