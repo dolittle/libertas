@@ -50,7 +50,7 @@
     },
     "dependencies": {
         "@dolittle/node-red": "2.0.0",
-        "@dolittle/rudiments": "3.0.0",
+        "@dolittle/rudiments": "5.0.0",
         "@types/node-fetch": "2.5.7",
         "@types/xml2js": "0.4.5",
         "mongodb": "3.5.8",

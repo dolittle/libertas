@@ -70,7 +70,7 @@
     "dependencies": {
         "@dolittle/fluentui.aurelia": "2.0.0",
         "@dolittle/libertas": "2.0.0",
-        "@dolittle/rudiments": "3.0.0",
+        "@dolittle/rudiments": "5.0.0",
         "@dolittle/sdk": "6.0.0",
         "@dolittle/sdk.artifacts": "6.0.0",
         "@dolittle/sdk.events": "6.0.0",
