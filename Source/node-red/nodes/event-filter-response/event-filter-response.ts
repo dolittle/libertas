@@ -47,6 +47,7 @@ module.exports = function (RED: Red) {
                 return;
             }
 
+
             if (promise.partitioned) {
                 if (typeof message.payload !== 'object' || message.payload.shouldInclude === undefined || message.payload.partitionId === undefined) {
                     this.error('For Partitioned and Public filters the response should be a partitioned filter response');

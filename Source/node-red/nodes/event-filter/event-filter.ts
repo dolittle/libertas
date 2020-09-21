@@ -42,6 +42,7 @@ module.exports = function (RED: Red) {
             this._cancellationSource = new CancellationSource();
 
             this._filterId = FilterId.from(config.filterId);
+
             this._scopeId = config.scopeId ? ScopeId.from(config.scopeId) : ScopeId.default;
             switch (config.filterType) {
                 case 'partitioned':
@@ -61,6 +62,7 @@ module.exports = function (RED: Red) {
             });
 
             this._server = this.getConfigurationFromNode(config.server);
+
             this._client = this._server?.clientBuilder
                 .withLogging(_ => _.useWinston(w => {
                     w.level = 'debug';
@@ -69,9 +71,7 @@ module.exports = function (RED: Red) {
                 .withEventStore(es => {
                     es.withFilters(f => {
                         if (this._filterType === FilterType.Public) {
-                            f.createPublicFilter(this._filterId.value, __ => {
-                                __.handle(this.createPartitionedFilterEventCallback());
-                            });
+                            f.createPublicFilter(this._filterId.value, this.createPartitionedFilterEventCallback());
                         } else {
                             f.createPrivateFilter(this._filterId.value, __ => {
                                 const ___ = __.inScope(this._scopeId.value);
@@ -84,6 +84,7 @@ module.exports = function (RED: Red) {
                         }
                     });
                 }).withCancellation(this._cancellationSource.cancellation).build();
+
         }
 
         createFilterEventCallback(): FilterEventCallback {

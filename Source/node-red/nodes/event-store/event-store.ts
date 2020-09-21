@@ -28,7 +28,7 @@ interface UncommittedEvent {
 class CommitEventsResponse {
 }
 
-type Request = MessageWithExecutionContext<UncommittedEvent | UncommittedEvent[]>;
+type Request = MessageWithExecutionContext<UncommittedEvent | UncommittedEvent[]>;
 type Response = MessageWithExecutionContext<CommitEventsResponse>;
 
 module.exports = function (RED: Red) {
@@ -61,7 +61,14 @@ module.exports = function (RED: Red) {
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
             this._client.executionContextManager.forTenant(message.executionContext.tenantId);
-            await this._client.eventStore.commit(events);
+
+            for (const event of events) {
+                if (event.public) {
+                    await this._client.eventStore.commitPublic(event.content, event.eventSourceId as any, event.artifact as any);
+                } else {
+                    await this._client.eventStore.commit(event.content, event.eventSourceId as any, event.artifact as any);
+                }
+            }
 
             console.log('Inserted events');
 
