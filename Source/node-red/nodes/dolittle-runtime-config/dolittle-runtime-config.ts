@@ -3,7 +3,6 @@
 
 import { NodeProperties, Red } from 'node-red';
 
-import { Guid } from '@dolittle/rudiments';
 import { MicroserviceId } from '@dolittle/sdk.execution';
 
 import { registerNodeType } from '../../Node';
