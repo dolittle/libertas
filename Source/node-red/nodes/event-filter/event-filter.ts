@@ -71,7 +71,7 @@ module.exports = function (RED: Red) {
                 .withEventStore(es => {
                     es.withFilters(f => {
                         if (this._filterType === FilterType.Public) {
-                            f.createPublicFilter(this._filterId.value, this.createPartitionedFilterEventCallback());
+                            f.createPublicFilter(this._filterId.value, __ => __.handle(this.createPartitionedFilterEventCallback()));
                         } else {
                             f.createPrivateFilter(this._filterId.value, __ => {
                                 const ___ = __.inScope(this._scopeId.value);
