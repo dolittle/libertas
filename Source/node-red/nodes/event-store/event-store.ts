@@ -6,8 +6,7 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 import { Node, registerNodeType } from '../../Node';
 
 import { Client } from '@dolittle/sdk';
-import { ArtifactId } from '@dolittle/sdk.artifacts';
-import { EventSourceId, CommitEventsResponse, CommittedEvents } from '@dolittle/sdk.events';
+import { CommitEventsResponse, CommittedEvents } from '@dolittle/sdk.events';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
 import { MessageWithExecutionContext } from '../../Message';
@@ -18,8 +17,8 @@ interface EventStoreProperties extends NodeProperties {
 }
 
 interface UncommittedEvent {
-    eventSourceId: EventSourceId,
-    artifact: ArtifactId,
+    eventSourceId: string,
+    artifact: string,
     content: any
     public?: boolean;
 }
@@ -66,9 +65,9 @@ module.exports = function (RED: Red) {
 
             for (const event of events) {
                 if (event.public) {
-                    result = await this._client.eventStore.commitPublic(event, event.eventSourceId.value, event.artifact.value);
+                    result = await this._client.eventStore.commitPublic(event, event.eventSourceId, event.artifact);
                 } else {
-                    result = await this._client.eventStore.commit(event.content, event.eventSourceId.value, event.artifact.value);
+                    result = await this._client.eventStore.commit(event.content, event.eventSourceId, event.artifact);
                 }
 
                 if (result.failed) {
