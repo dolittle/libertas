@@ -65,7 +65,7 @@ module.exports = function (RED: Red) {
 
             for (const event of events) {
                 if (event.public) {
-                    result = await this._client.eventStore.commitPublic(event, event.eventSourceId, event.artifact);
+                    result = await this._client.eventStore.commitPublic(event.content, event.eventSourceId, event.artifact);
                 } else {
                     result = await this._client.eventStore.commit(event.content, event.eventSourceId, event.artifact);
                 }
