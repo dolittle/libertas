@@ -5,11 +5,9 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 
 import { Node, registerNodeType } from '../../Node';
 
-import { Guid } from '@dolittle/rudiments';
 import { Client } from '@dolittle/sdk';
-import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
+import { ArtifactId } from '@dolittle/sdk.artifacts';
 import { EventContext, ScopeId } from '@dolittle/sdk.events';
-import { FilterId, FilterEventCallback, PartitionedFilterEventCallback, PartitionedFilterResult } from '@dolittle/sdk.events.filtering';
 import { EventHandlerId } from '@dolittle/sdk.events.handling';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 

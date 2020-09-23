@@ -10,12 +10,10 @@ export interface InforM3Config {
     readonly password: string;
 }
 
-interface InforM3ConfigProperties extends NodeProperties {
-    readonly credentials: {
-        readonly endpoint: string;
-        readonly username: string;
-        readonly password: string;
-    };
+interface InforM3Credentials {
+    readonly endpoint: string;
+    readonly username: string;
+    readonly password: string;
 }
 
 module.exports = function (RED: Red) {
@@ -26,21 +24,23 @@ module.exports = function (RED: Red) {
             password: { type: 'password', required: true }
         }
     })
-    class InforM3Config extends ConfigurationNode<InforM3ConfigProperties> implements InforM3Config {
+    class InforM3Config extends ConfigurationNode<NodeProperties, InforM3Credentials> implements InforM3Config {
         readonly endpoint: string = '';
         readonly username: string = '';
         readonly password: string = '';
 
-        constructor(config: InforM3ConfigProperties) {
+        constructor(config: NodeProperties) {
             super(config);
 
-            this.endpoint = config.credentials.endpoint;
-            this.username = config.credentials.username;
-            this.password = config.credentials.password;
+            if (this.credentials) {
+                this.endpoint = this.credentials.endpoint;
+                this.username = this.credentials.username;
+                this.password = this.credentials.password;
+            }
         }
 
-        validate(config: InforM3ConfigProperties): boolean {
-            return !!config.credentials.endpoint && !!config.credentials.username && !!config.credentials.password;
+        validate(config: NodeProperties, credentials?: InforM3Credentials): boolean {
+            return !!credentials && !!credentials.endpoint && !!credentials.username && !!credentials.password;
         }
     }
 };

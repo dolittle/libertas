@@ -25,7 +25,7 @@ interface DolittleRuntimeProperties extends NodeProperties {
 
 module.exports = function (RED: Red) {
     @registerNodeType(RED, 'dolittle-runtime-config')
-    class DolittleRuntimeConfig extends ConfigurationNode<DolittleRuntimeProperties> implements DolittleRuntimeConfig {
+    class DolittleRuntimeConfig extends ConfigurationNode<DolittleRuntimeProperties, void> implements DolittleRuntimeConfig {
         readonly microservice: MicroserviceId = MicroserviceId.notApplicable;
         readonly host: string = '';
         readonly port: number = 0;

@@ -36,8 +36,8 @@
             "MTPL",
             "ITNO"
         ],
-        "x": 490,
-        "y": 180,
+        "x": 450,
+        "y": 160,
         "wires": [
             [
                 "5fdf1785.03b688"
@@ -170,5 +170,25 @@
         "x": 790,
         "y": 300,
         "wires": []
+    },
+    {
+        "id": "3bfd016f.13fcce",
+        "type": "inject",
+        "z": "44b233f4.645aec",
+        "name": "",
+        "topic": "",
+        "payload": "{\"eventSourceId\":\"7a6155dd-9109-4488-8f6f-c57fe4b65bfb\",\"content\":{\"anInt\":42,\"aString\":\"hello world\"}}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 380,
+        "wires": [
+            [
+                "3abb1b27.1f4ed4"
+            ]
+        ]
     }
 ]

@@ -5,9 +5,8 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 
 import { Node, registerNodeType } from '../../Node';
 
-import { Guid } from '@dolittle/rudiments';
 import { Client } from '@dolittle/sdk';
-import { Artifact, ArtifactId } from '@dolittle/sdk.artifacts';
+import { ArtifactId } from '@dolittle/sdk.artifacts';
 import { EventSourceId } from '@dolittle/sdk.events';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
@@ -61,18 +60,46 @@ module.exports = function (RED: Red) {
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
             this._client.executionContextManager.forTenant(message.executionContext.tenantId);
+            const result = await this._client.eventStore.commit(events);
 
-            for (const event of events) {
-                if (event.public) {
-                    await this._client.eventStore.commitPublic(event.content, event.eventSourceId as any, event.artifact as any);
-                } else {
-                    await this._client.eventStore.commit(event.content, event.eventSourceId as any, event.artifact as any);
-                }
+            const response = message as any;
+            if (result.failed) {
+                response.payload = {
+                    committed: false,
+                    failureId: result.failure?.id.toString(),
+                    failureReason: result.failure?.reason,
+                };
+            } else {
+                response.payload = {
+                    committed: true,
+                    events: result.events.toArray().map(event => ({
+                        artifact: {
+                            id: event.type.id.toString(),
+                            generation: event.type.generation,
+                        },
+                        content: event.content,
+                        context: {
+                            sequenceNumber: event.eventLogSequenceNumber,
+                            eventSourceId: event.eventSourceId.toString(),
+                            occurred: event.occurred.toString(),
+                            public: event.isPublic,
+                            executionContext: {
+                                microserviceId: event.executionContext.microserviceId.toString(),
+                                tenantId: event.executionContext.tenantId.toString(),
+                                version: event.executionContext.version.toString(),
+                                environment: event.executionContext.environment,
+                                correlationId: event.executionContext.correlationId.toString(),
+                                claims: event.executionContext.claims.toArray().map(claim => ({
+                                    key: claim.key,
+                                    value: claim.value,
+                                    valueType: claim.valueType,
+                                })),
+                            },
+                        },
+                    })),
+                };
             }
-
-            console.log('Inserted events');
-
-            // TODO: Send some response back
+            send(response);
         }
     }
 };

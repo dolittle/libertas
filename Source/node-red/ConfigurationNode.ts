@@ -4,12 +4,14 @@
 import { Node } from './Node';
 import { NodeProperties, Red } from 'node-red';
 
-export abstract class ConfigurationNode<T extends NodeProperties> extends Node {
+export abstract class ConfigurationNode<Tproperties extends NodeProperties, Tcredentials> extends Node {
     readonly isValid: boolean;
+    readonly credentials?: Tcredentials;
 
-    constructor(config: T) {
+    constructor(config: Tproperties) {
         super(config);
-        this.isValid = this.validate(config);
+        this.credentials = (this as any).credentials as Tcredentials;
+        this.isValid = this.validate(config, this.credentials);
 
         if (!this.isValid) {
             this.status({
@@ -20,5 +22,5 @@ export abstract class ConfigurationNode<T extends NodeProperties> extends Node {
         }
     }
 
-    abstract validate (config: T): boolean;
+    abstract validate (config: Tproperties, credentials?: Tcredentials): boolean;
 }
