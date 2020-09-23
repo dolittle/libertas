@@ -7,7 +7,7 @@ import { Node, registerNodeType } from '../../Node';
 
 import { Client } from '@dolittle/sdk';
 import { ArtifactId } from '@dolittle/sdk.artifacts';
-import { EventSourceId } from '@dolittle/sdk.events';
+import { EventSourceId, CommitEventsResponse, CommittedEvents } from '@dolittle/sdk.events';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
 import { MessageWithExecutionContext } from '../../Message';
@@ -22,9 +22,6 @@ interface UncommittedEvent {
     artifact: ArtifactId,
     content: any
     public?: boolean;
-}
-
-class CommitEventsResponse {
 }
 
 type Request = MessageWithExecutionContext<UncommittedEvent | UncommittedEvent[]>;
@@ -60,46 +57,68 @@ module.exports = function (RED: Red) {
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
             this._client.executionContextManager.forTenant(message.executionContext.tenantId);
-            const result = await this._client.eventStore.commit(events);
+
+            let result: CommitEventsResponse;
+            let committedEvents: any[] = [];
+            let failed = false;
 
             const response = message as any;
-            if (result.failed) {
-                response.payload = {
-                    committed: false,
-                    failureId: result.failure?.id.toString(),
-                    failureReason: result.failure?.reason,
-                };
-            } else {
+
+            for (const event of events) {
+                if (event.public) {
+                    result = await this._client.eventStore.commitPublic(event, event.eventSourceId.value, event.artifact.value);
+                } else {
+                    result = await this._client.eventStore.commit(event.content, event.eventSourceId.value, event.artifact.value);
+                }
+
+                if (result.failed) {
+                    response.payload = {
+                        committed: false,
+                        failureId: result.failure?.id.toString(),
+                        failureReason: result.failure?.reason,
+                    };
+                    failed = true;
+                    break;
+                } else {
+                    committedEvents = [...committedEvents, this.getEventsFrom(result.events)];
+                }
+            }
+
+            if (!failed) {
                 response.payload = {
                     committed: true,
-                    events: result.events.toArray().map(event => ({
-                        artifact: {
-                            id: event.type.id.toString(),
-                            generation: event.type.generation,
-                        },
-                        content: event.content,
-                        context: {
-                            sequenceNumber: event.eventLogSequenceNumber,
-                            eventSourceId: event.eventSourceId.toString(),
-                            occurred: event.occurred.toString(),
-                            public: event.isPublic,
-                            executionContext: {
-                                microserviceId: event.executionContext.microserviceId.toString(),
-                                tenantId: event.executionContext.tenantId.toString(),
-                                version: event.executionContext.version.toString(),
-                                environment: event.executionContext.environment,
-                                correlationId: event.executionContext.correlationId.toString(),
-                                claims: event.executionContext.claims.toArray().map(claim => ({
-                                    key: claim.key,
-                                    value: claim.value,
-                                    valueType: claim.valueType,
-                                })),
-                            },
-                        },
-                    })),
+                    events: committedEvents
                 };
             }
             send(response);
+        }
+
+        private getEventsFrom(events: CommittedEvents) {
+            return events.toArray().map(event => ({
+                artifact: {
+                    id: event.type.id.toString(),
+                    generation: event.type.generation,
+                },
+                content: event.content,
+                context: {
+                    sequenceNumber: event.eventLogSequenceNumber,
+                    eventSourceId: event.eventSourceId.toString(),
+                    occurred: event.occurred.toString(),
+                    public: event.isPublic,
+                    executionContext: {
+                        microserviceId: event.executionContext.microserviceId.toString(),
+                        tenantId: event.executionContext.tenantId.toString(),
+                        version: event.executionContext.version.toString(),
+                        environment: event.executionContext.environment,
+                        correlationId: event.executionContext.correlationId.toString(),
+                        claims: event.executionContext.claims.toArray().map(claim => ({
+                            key: claim.key,
+                            value: claim.value,
+                            valueType: claim.valueType,
+                        })),
+                    },
+                },
+            }));
         }
     }
 };
