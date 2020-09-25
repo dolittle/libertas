@@ -70,7 +70,7 @@
     "dependencies": {
         "@dolittle/fluentui.aurelia": "2.0.0",
         "@dolittle/libertas": "^2.0.0",
-        "@dolittle/sdk": "7.0.1",
+        "@dolittle/sdk": "7.0.2",
         "@uifabric/icons": "7.3.37",
         "aurelia-animator-css": "1.0.4",
         "aurelia-bootstrapper": "2.3.3",
