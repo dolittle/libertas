@@ -6,11 +6,12 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 import { Node, registerNodeType } from '../../Node';
 
 import { Client } from '@dolittle/sdk';
-import { CommitEventsResponse, CommittedEvents } from '@dolittle/sdk.events';
+import { CommitEventsResult, CommittedEvents } from '@dolittle/sdk.events';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
 import { MessageWithExecutionContext } from '../../Message';
 import { messageHandlerNode, SendCallback } from '../../MessageHandlerNode';
+import { Logger } from '../../Logging';
 
 interface EventStoreProperties extends NodeProperties {
     server: NodeId;
@@ -24,7 +25,7 @@ interface UncommittedEvent {
 }
 
 type Request = MessageWithExecutionContext<UncommittedEvent | UncommittedEvent[]>;
-type Response = MessageWithExecutionContext<CommitEventsResponse>;
+type Response = MessageWithExecutionContext<CommitEventsResult>;
 
 module.exports = function (RED: Red) {
     @registerNodeType(RED, 'event-store')
@@ -37,7 +38,7 @@ module.exports = function (RED: Red) {
             super(config);
 
             this._server = this.getConfigurationFromNode(config.server);
-            this._client = this._server?.clientBuilder.withLogging(_ => _.useWinston(w => w.transports = this._loggerTransport)).build();
+            this._client = this._server?.clientBuilder.withLogging(Logger).build();
 
             // TODO: Setup on close to handle stopping gracefully
         }
@@ -55,19 +56,19 @@ module.exports = function (RED: Red) {
 
             const events = Array.isArray(message.payload) ? message.payload : [message.payload];
 
-            this._client.executionContextManager.forTenant(message.executionContext.tenantId);
-
-            let result: CommitEventsResponse;
+            let result: CommitEventsResult;
             let committedEvents: any[] = [];
             let failed = false;
 
             const response = message as any;
 
+            const eventStore = this._client.eventStore.forTenant(message.executionContext.tenantId.value);
+
             for (const event of events) {
                 if (event.public) {
-                    result = await this._client.eventStore.commitPublic(event.content, event.eventSourceId, event.artifact);
+                    result = await eventStore.commitPublic(event.content, event.eventSourceId, event.artifact);
                 } else {
-                    result = await this._client.eventStore.commit(event.content, event.eventSourceId, event.artifact);
+                    result = await eventStore.commit(event.content, event.eventSourceId, event.artifact);
                 }
 
                 if (result.failed) {

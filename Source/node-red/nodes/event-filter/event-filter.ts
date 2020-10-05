@@ -11,6 +11,7 @@ import { EventContext, ScopeId } from '@dolittle/sdk.events';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
+import { Logger } from '../../Logging';
 
 interface EventFilterProperties extends NodeProperties {
     server: string;
@@ -64,25 +65,20 @@ module.exports = function (RED: Red) {
             this._server = this.getConfigurationFromNode(config.server);
 
             this._client = this._server?.clientBuilder
-                .withLogging(_ => _.useWinston(w => {
-                    w.level = 'debug';
-                    w.transports = this._loggerTransport;
-                }))
-                .withEventStore(es => {
-                    es.withFilters(f => {
-                        if (this._filterType === FilterType.Public) {
-                            f.createPublicFilter(this._filterId.value, __ => __.handle(this.createPartitionedFilterEventCallback()));
-                        } else {
-                            f.createPrivateFilter(this._filterId.value, __ => {
-                                const ___ = __.inScope(this._scopeId.value);
-                                if (this._filterType === FilterType.Partitioned) {
-                                    ___.partitioned().handle(this.createPartitionedFilterEventCallback());
-                                } else {
-                                    ___.handle(this.createFilterEventCallback());
-                                }
-                            });
-                        }
-                    });
+                .withLogging(Logger)
+                .withFilters(f => {
+                    if (this._filterType === FilterType.Public) {
+                        f.createPublicFilter(this._filterId.value, __ => __.handle(this.createPartitionedFilterEventCallback()));
+                    } else {
+                        f.createPrivateFilter(this._filterId.value, __ => {
+                            const ___ = __.inScope(this._scopeId.value);
+                            if (this._filterType === FilterType.Partitioned) {
+                                ___.partitioned().handle(this.createPartitionedFilterEventCallback());
+                            } else {
+                                ___.unpartitioned().handle(this.createFilterEventCallback());
+                            }
+                        });
+                    }
                 }).withCancellation(this._cancellationSource.cancellation).build();
 
         }

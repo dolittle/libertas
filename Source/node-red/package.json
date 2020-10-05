@@ -64,7 +64,7 @@
     },
     "dependencies": {
         "@dolittle/libertas": "^2.0.0",
-        "@dolittle/sdk": "7.0.2",
+        "@dolittle/sdk": "13.0.0",
         "@uifabric/icons": "7.3.37",
         "express": "4.17.1",
         "node-red": "1.0.6",

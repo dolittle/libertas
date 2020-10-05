@@ -44,7 +44,7 @@ module.exports = function (RED: Red) {
         }
 
         get clientBuilder(): ClientBuilder {
-            return Client.create().forMicroservice(this.microservice).connectToRuntime(this.host, this.port);
+            return Client.forMicroservice(this.microservice).withRuntimeOn(this.host, this.port);
         }
     }
 };

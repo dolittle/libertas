@@ -6,20 +6,21 @@ import { NodeProperties, Red, NodeId } from 'node-red';
 import { Node, registerNodeType } from '../../Node';
 
 import { Client } from '@dolittle/sdk';
-import { ArtifactId } from '@dolittle/sdk.artifacts';
+import { EventTypeId } from '@dolittle/sdk.artifacts';
 import { EventContext, ScopeId } from '@dolittle/sdk.events';
 import { EventHandlerId } from '@dolittle/sdk.events.handling';
 import { CancellationSource } from '@dolittle/sdk.resilience';
 
 import { DolittleRuntimeConfig } from '../dolittle-runtime-config/dolittle-runtime-config';
 import { EventHandlerSignature } from '@dolittle/sdk.events.handling/Distribution/EventHandlerSignature';
+import { Logger } from '../../Logging';
 
 interface EventHandlerProperties extends NodeProperties {
     server: string;
     eventHandlerId: string;
     partitioned: boolean;
     scopeId: string;
-    artifacts: string[];
+    eventTypes: string[];
 }
 
 module.exports = function (RED: Red) {
@@ -32,7 +33,7 @@ module.exports = function (RED: Red) {
         private _eventHandlerId: EventHandlerId;
         private _partitioned: boolean;
         private _scopeId: ScopeId;
-        private _artifacts: ArtifactId[];
+        private _eventTypes: EventTypeId[];
 
 
         constructor(config: EventHandlerProperties) {
@@ -43,7 +44,7 @@ module.exports = function (RED: Red) {
             this._eventHandlerId = EventHandlerId.from(config.eventHandlerId);
             this._partitioned = !!config.partitioned;
             this._scopeId = !!config.scopeId ? ScopeId.from(config.scopeId) : ScopeId.default;
-            this._artifacts = config.artifacts.map(_ => ArtifactId.from(_));
+            this._eventTypes = config.eventTypes.map(_ => EventTypeId.from(_));
 
             this.on('close', (done: () => void) => {
                 this._cancellationSource.cancel();
@@ -52,31 +53,26 @@ module.exports = function (RED: Red) {
 
             this._server = this.getConfigurationFromNode(config.server);
             this._client = this._server?.clientBuilder
-                .withLogging(_ => _.useWinston(w => {
-                    w.level = 'debug';
-                    w.transports = this._loggerTransport;
-                }))
-                .withEventStore(es => {
-                    es.withEventHandlers(_ => {
-                        _.createEventHandler(this._eventHandlerId.value, __ => {
-                            __.inScope(this._scopeId.value);
-                            if (this._partitioned) {
-                                __.partitioned();
-                            } else {
-                                __.unpartitioned();
-                            }
-                            for (let n = 0; n < this._artifacts.length; n++) {
-                                const artifact = this._artifacts[n];
-                                __.handle(artifact.value, this.createHandleEventCallback(n, this._artifacts.length, artifact));
-                            }
-                        });
+                .withLogging(Logger)
+                .withEventHandlers(_ => {
+                    _.createEventHandler(this._eventHandlerId.value, __ => {
+                        __.inScope(this._scopeId.value);
+                        if (this._partitioned) {
+                            __.partitioned();
+                        } else {
+                            __.unpartitioned();
+                        }
+                        for (let n = 0; n < this._eventTypes.length; n++) {
+                            const eventType = this._eventTypes[n];
+                            __.unpartitioned().handle(eventType.value, this.createHandleEventCallback(n, this._eventTypes.length, eventType));
+                        }
                     });
                 })
                 .withCancellation(this._cancellationSource.cancellation)
                 .build();
         }
 
-        createHandleEventCallback(output: number, outputs: number, artifact: ArtifactId): EventHandlerSignature<any> {
+        createHandleEventCallback(output: number, outputs: number, eventType: EventTypeId): EventHandlerSignature<any> {
             return (event: any, context: EventContext) => new Promise<void>((resolve, reject) => {
                 const msgs = new Array(outputs).fill(null);
                 msgs[output] = {
